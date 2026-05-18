@@ -13,12 +13,9 @@
 </head>
 <body>
   <div id="root"></div>
-
-  <!-- React + ReactDOM + Babel da CDN (nessun build richiesto) -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
   <script type="text/babel">
     const { useState, useEffect, useCallback, Component } = React;
 
@@ -1429,6 +1426,7 @@ const PAGE_LABELS = { home:"Dashboard", app:"Gestione App", social:"Social Media
 function Shell({ uid, setUid }) {
   const [page, setPage] = useState("home");
   const [mob,  setMob]  = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const cur = getUser(uid);
 
@@ -1439,16 +1437,24 @@ function Shell({ uid, setUid }) {
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  // Auto-refresh ogni 2 minuti
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRefreshKey(k => k + 1);
+    }, 120000);
+    return () => clearInterval(interval);
+  }, []);
+
   const visNav = NAV.filter(n => n.roles.includes("all") || n.roles.includes(uid));
 
   const PageContent = () => {
-    if (page==="home")  return <ErrBound name="Home"><PageHome cur={cur} /></ErrBound>;
-    if (page==="app")   return <ErrBound name="App"><PageApp cur={cur} /></ErrBound>;
-    if (page==="social")return <ErrBound name="Social"><PageSocial cur={cur} /></ErrBound>;
-    if (page==="cont")  return <ErrBound name="Contabilità"><PageCont cur={cur} /></ErrBound>;
-    if (page==="turni") return <ErrBound name="Turni"><PageTurni cur={cur} /></ErrBound>;
-    if (page==="contr") return <ErrBound name="Contratti"><PageContratti cur={cur} /></ErrBound>;
-    if (page==="task")  return <ErrBound name="Task"><PageTask cur={cur} /></ErrBound>;
+    if (page==="home")  return <ErrBound name="Home"><PageHome cur={cur} key={refreshKey} /></ErrBound>;
+    if (page==="app")   return <ErrBound name="App"><PageApp cur={cur} key={refreshKey} /></ErrBound>;
+    if (page==="social")return <ErrBound name="Social"><PageSocial cur={cur} key={refreshKey} /></ErrBound>;
+    if (page==="cont")  return <ErrBound name="Contabilità"><PageCont cur={cur} key={refreshKey} /></ErrBound>;
+    if (page==="turni") return <ErrBound name="Turni"><PageTurni cur={cur} key={refreshKey} /></ErrBound>;
+    if (page==="contr") return <ErrBound name="Contratti"><PageContratti cur={cur} key={refreshKey} /></ErrBound>;
+    if (page==="task")  return <ErrBound name="Task"><PageTask cur={cur} key={refreshKey} /></ErrBound>;
     return null;
   };
 
@@ -1654,7 +1660,6 @@ function App() {
 }
 
 
-    // Avvia l'app
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
