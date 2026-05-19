@@ -964,6 +964,83 @@ function PageSocial({ cur }) {
   );
 }
 
+// ─── CHECKLIST MANUALE (Contabilità) ─────────────────────────────────────────
+function ChecklistManuale({ mk, canEdit, color }) {
+  const [items,   setItems]   = useState([]); // [{id, testo, done}]
+  const [newTxt,  setNewTxt]  = useState("");
+  const storeKey = `contab-manual-${mk}`;
+
+  useEffect(() => {
+    kvGet(storeKey).then(v => {
+      setItems(Array.isArray(v) ? v : []);
+    });
+  }, [storeKey]);
+
+  const save = async (updated) => {
+    setItems(updated);
+    await kvSet(storeKey, updated);
+  };
+
+  const aggiungi = async () => {
+    if (!newTxt.trim()) return;
+    const updated = [...items, { id: Date.now(), testo: newTxt.trim(), done: false }];
+    await save(updated);
+    setNewTxt("");
+  };
+
+  const togDone = async (id) => {
+    if (!canEdit) return;
+    const updated = items.map(i => i.id===id ? { ...i, done: !i.done } : i);
+    await save(updated);
+  };
+
+  const elimina = async (id) => {
+    const updated = items.filter(i => i.id !== id);
+    await save(updated);
+  };
+
+  const doneCnt = items.filter(i => i.done).length;
+
+  return (
+    <Card>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+        <STitle color={color}>Checklist mese</STitle>
+        {items.length > 0 && <Bdg txt={`${doneCnt}/${items.length}`} color={color} />}
+      </div>
+
+      {items.length === 0 && (
+        <p style={{ color:C.muted, fontSize:13, marginBottom:12 }}>Nessuna voce. Aggiungine una sotto.</p>
+      )}
+
+      {items.map(item => (
+        <div key={item.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.border}` }}>
+          <Chk on={item.done} onChange={() => togDone(item.id)} color={color} off={!canEdit} />
+          <span style={{ flex:1, color:item.done?C.muted:C.text, textDecoration:item.done?"line-through":"none", fontSize:14 }}>
+            {item.testo}
+          </span>
+          {canEdit && (
+            <button onClick={() => elimina(item.id)}
+              style={{ background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:16, padding:"0 4px", lineHeight:1 }}>×</button>
+          )}
+        </div>
+      ))}
+
+      {canEdit && (
+        <div style={{ display:"flex", gap:8, marginTop:14 }}>
+          <input
+            value={newTxt}
+            onChange={e => setNewTxt(e.target.value)}
+            onKeyDown={e => e.key==="Enter" && aggiungi()}
+            placeholder="Aggiungi voce checklist..."
+            style={{ flex:1, background:C.input, border:`1px solid ${C.border}`, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none" }}
+          />
+          <Btn onClick={aggiungi} color={color}>+ Aggiungi</Btn>
+        </div>
+      )}
+    </Card>
+  );
+}
+
 // ─── PAGE: CONTABILITÀ ────────────────────────────────────────────────────────
 function PageCont({ cur }) {
   const canEdit = ADMINS.includes(cur.id);
@@ -991,24 +1068,7 @@ function PageCont({ cur }) {
       {tab==="cl" && (
         <div style={{ display:"grid", gap:16 }}>
           <PNav label={mOff===0 ? `Questo mese — ${fmtMon(mk)}` : fmtMon(mk)} onPrev={()=>setMOff(o=>o-1)} onNext={()=>setMOff(o=>Math.min(0,o+1))} atEnd={mOff===0} onReset={()=>setMOff(0)} resetLabel="Questo" />
-          <Card>
-            <STitle>Fine mese — {fmtMon(mk)}</STitle>
-            {CL_CFIN.map(item => (
-              <div key={item.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.border}` }}>
-                <Chk on={!!ch[`fm_${item.id}`]} onChange={() => tog("fm", item.id)} color={color} off={!canEdit} />
-                <span style={{ color:ch[`fm_${item.id}`]?C.muted:C.text, textDecoration:ch[`fm_${item.id}`]?"line-through":"none", fontSize:14 }}>{item.t}</span>
-              </div>
-            ))}
-          </Card>
-          <Card>
-            <STitle>Prima nota</STitle>
-            {CL_PN.map(item => (
-              <div key={item.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.border}` }}>
-                <Chk on={!!ch[`pn_${item.id}`]} onChange={() => tog("pn", item.id)} color={color} off={!canEdit} />
-                <span style={{ color:ch[`pn_${item.id}`]?C.muted:C.text, textDecoration:ch[`pn_${item.id}`]?"line-through":"none", fontSize:14 }}>{item.t}</span>
-              </div>
-            ))}
-          </Card>
+          <ChecklistManuale mk={mk} canEdit={canEdit} color={color} />
         </div>
       )}
     </div>
@@ -1121,12 +1181,251 @@ function PageTurni({ cur }) {
 // ─── PAGE: CONTRATTI ──────────────────────────────────────────────────────────
 function PageContratti({ cur }) {
   const canCreate = ADMINS.includes(cur.id);
+  const canSeePrivate = ADMINS.includes(cur.id);
   const color     = cur.color;
   const [contracts, setContracts] = useState([]);
   const [selId,  setSelId]  = useState(null);
   const [showNew,setShowNew]= useState(false);
-  const [nf,     setNf]     = useState({ nome:"", data:toDay(), note:"" });
-  const [load,   setLoad]   = useState(true);
+  const [editInfo, setEditInfo] = useState(false);
+  const [nf, setNf] = useState({
+    nome:"", data:toDay(), note:"",
+    telefoni:[""], email:"", tipo_locale:"", commissione:"",
+    referente:"", giorno_chiusura:"", orario_apertura:"", orario_chiusura:"",
+    pec:"", aggiunta_menu:""
+  });
+  const [load, setLoad] = useState(true);
+
+  const load_ = async () => { setLoad(true); const d=await dbGet("contracts","?order=created_at.desc"); setContracts(d); setLoad(false); };
+  useEffect(() => { load_(); }, []);
+
+  const create = async () => {
+    if (!nf.nome.trim()) return;
+    const tasks = {};
+    ALL_CT.forEach(t => { tasks[t.id] = false; });
+    const tels = nf.telefoni.filter(t => t.trim());
+    await dbUpsert("contracts", { id:Date.now(), nome:nf.nome.trim(), data:nf.data, note:nf.note, tasks,
+      telefoni:tels, email:nf.email, tipo_locale:nf.tipo_locale, commissione:nf.commissione,
+      referente:nf.referente, giorno_chiusura:nf.giorno_chiusura, orario_apertura:nf.orario_apertura,
+      orario_chiusura:nf.orario_chiusura, pec:nf.pec, aggiunta_menu:nf.aggiunta_menu });
+    setNf({ nome:"", data:toDay(), note:"", telefoni:[""], email:"", tipo_locale:"", commissione:"",
+      referente:"", giorno_chiusura:"", orario_apertura:"", orario_chiusura:"", pec:"", aggiunta_menu:"" });
+    setShowNew(false);
+    load_();
+  };
+
+  const saveInfo = async () => {
+    const c = contracts.find(x => x.id===selId);
+    if (!c) return;
+    const tels = nf.telefoni.filter(t => t.trim());
+    await dbUpsert("contracts", { ...c, telefoni:tels, email:nf.email, tipo_locale:nf.tipo_locale,
+      commissione:nf.commissione, referente:nf.referente, giorno_chiusura:nf.giorno_chiusura,
+      orario_apertura:nf.orario_apertura, orario_chiusura:nf.orario_chiusura,
+      pec:nf.pec, aggiunta_menu:nf.aggiunta_menu, note:nf.note });
+    setEditInfo(false);
+    load_();
+  };
+
+  const toggleTask = async (cid, tid) => {
+    const c = contracts.find(x => x.id===cid);
+    if (!c) return;
+    const tasks_old = c.tasks && typeof c.tasks === "object" ? c.tasks : {};
+    const tasks = { ...tasks_old, [tid]: !tasks_old[tid] };
+    await dbUpsert("contracts", { ...c, tasks });
+    setContracts(p => p.map(x => x.id===cid ? { ...x, tasks } : x));
+  };
+
+  const prog = c => {
+    const t = c.tasks && typeof c.tasks === "object" ? c.tasks : {};
+    const done = ALL_CT.filter(x => t[x.id]).length;
+    return { done, total:ALL_CT.length, pct: Math.round(done/ALL_CT.length*100) };
+  };
+
+  const sel = contracts.find(c => c.id === selId);
+
+  // Quando si seleziona un contratto, popola il form di modifica
+  useEffect(() => {
+    if (sel) {
+      const tels = Array.isArray(sel.telefoni) && sel.telefoni.length > 0 ? sel.telefoni : [""];
+      setNf(p => ({ ...p,
+        telefoni: tels, email: sel.email||"", tipo_locale: sel.tipo_locale||"",
+        commissione: sel.commissione||"", referente: sel.referente||"",
+        giorno_chiusura: sel.giorno_chiusura||"", orario_apertura: sel.orario_apertura||"",
+        orario_chiusura: sel.orario_chiusura||"", pec: sel.pec||"",
+        aggiunta_menu: sel.aggiunta_menu||"", note: sel.note||""
+      }));
+    }
+  }, [selId]);
+
+  const SECS = [
+    { key:"app",  label:"📱 App Manager",  tasks:CT_APP, color:"#2563eb" },
+    { key:"soc",  label:"📣 Social Media", tasks:CT_SOC, color:"#7c3aed" },
+    { key:"cont", label:"📊 Contabilità",  tasks:CT_CON, color:"#059669" },
+  ];
+  const canSec = sec => ADMINS.includes(cur.id) || (sec==="app"&&cur.id==="app") || (sec==="soc"&&cur.id==="social") || (sec==="cont"&&cur.id==="contabilita");
+
+  // Form campi (riusato per nuovo e modifica)
+  const DettagliForm = () => (
+    <div style={{ display:"grid", gap:12 }}>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+        <Inp label="Referente" value={nf.referente} onChange={e=>setNf(p=>({...p,referente:e.target.value}))} placeholder="Nome contatto" />
+        <Inp label="Tipo locale" value={nf.tipo_locale} onChange={e=>setNf(p=>({...p,tipo_locale:e.target.value}))} placeholder="Es. Ristorante, Pizzeria..." />
+        <Inp label="Email" value={nf.email} onChange={e=>setNf(p=>({...p,email:e.target.value}))} placeholder="email@esempio.it" />
+        <Inp label="Giorno di chiusura" value={nf.giorno_chiusura} onChange={e=>setNf(p=>({...p,giorno_chiusura:e.target.value}))} placeholder="Es. Lunedì" />
+        <Inp label="Orario apertura" value={nf.orario_apertura} onChange={e=>setNf(p=>({...p,orario_apertura:e.target.value}))} placeholder="Es. 12:00" />
+        <Inp label="Orario chiusura" value={nf.orario_chiusura} onChange={e=>setNf(p=>({...p,orario_chiusura:e.target.value}))} placeholder="Es. 22:00" />
+        <Inp label="Aggiunta menu €" value={nf.aggiunta_menu} onChange={e=>setNf(p=>({...p,aggiunta_menu:e.target.value}))} placeholder="Es. +1.50" />
+        {canSeePrivate && <Inp label="Commissione %" value={nf.commissione} onChange={e=>setNf(p=>({...p,commissione:e.target.value}))} placeholder="Es. 15%" />}
+        {canSeePrivate && <Inp label="PEC" value={nf.pec} onChange={e=>setNf(p=>({...p,pec:e.target.value}))} placeholder="pec@esempio.it" />}
+      </div>
+      {/* Telefoni multipli */}
+      <div>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+          <label style={{ color:C.sec, fontSize:11, fontWeight:600 }}>Numeri di telefono</label>
+          <button onClick={() => setNf(p=>({...p,telefoni:[...p.telefoni,""]}))}
+            style={{ background:"none", border:"none", color, fontSize:12, cursor:"pointer", fontFamily:"inherit", fontWeight:600 }}>+ aggiungi</button>
+        </div>
+        {nf.telefoni.map((tel,i) => (
+          <div key={i} style={{ display:"flex", gap:6, marginBottom:6 }}>
+            <input value={tel} onChange={e => { const t=[...nf.telefoni]; t[i]=e.target.value; setNf(p=>({...p,telefoni:t})); }}
+              placeholder="Es. 0932 000000" style={{ flex:1, background:C.input, border:`1px solid ${C.border}`, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none" }} />
+            {nf.telefoni.length > 1 && (
+              <button onClick={() => setNf(p=>({...p,telefoni:p.telefoni.filter((_,j)=>j!==i)}))}
+                style={{ background:"none", border:"none", color:"#dc2626", cursor:"pointer", fontSize:18, padding:"0 6px" }}>×</button>
+            )}
+          </div>
+        ))}
+      </div>
+      <div>
+        <label style={{ color:C.sec, fontSize:11, fontWeight:600, display:"block", marginBottom:4 }}>Note</label>
+        <textarea value={nf.note} onChange={e=>setNf(p=>({...p,note:e.target.value}))} placeholder="Note aggiuntive..." rows={2}
+          style={{ background:C.input, border:`1px solid ${C.border}`, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none", width:"100%", boxSizing:"border-box", resize:"vertical" }} />
+      </div>
+    </div>
+  );
+
+  // Vista dettagli contratto (sola lettura)
+  const DettagliView = ({ c }) => {
+    const tels = Array.isArray(c.telefoni) ? c.telefoni.filter(Boolean) : [];
+    const rows = [
+      { l:"Referente",       v:c.referente,        show:true },
+      { l:"Tipo locale",     v:c.tipo_locale,      show:true },
+      { l:"Email",           v:c.email,            show:true },
+      { l:"Telefoni",        v:tels.join(" / "),   show:true },
+      { l:"Giorno chiusura", v:c.giorno_chiusura,  show:true },
+      { l:"Orari",           v:c.orario_apertura && c.orario_chiusura ? `${c.orario_apertura} – ${c.orario_chiusura}` : c.orario_apertura||c.orario_chiusura, show:true },
+      { l:"Aggiunta menu",   v:c.aggiunta_menu,    show:true },
+      { l:"Commissione",     v:c.commissione,      show:canSeePrivate },
+      { l:"PEC",             v:c.pec,              show:canSeePrivate },
+    ].filter(r => r.show && r.v);
+
+    if (rows.length === 0 && !c.note) return null;
+    return (
+      <div style={{ background:C.bg, borderRadius:10, padding:12, marginBottom:16 }}>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
+          {rows.map(r => (
+            <div key={r.l}>
+              <div style={{ color:C.muted, fontSize:10, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.06em" }}>{r.l}</div>
+              <div style={{ color:C.text, fontSize:13, fontWeight:500, marginTop:1 }}>{String(r.v)}</div>
+            </div>
+          ))}
+        </div>
+        {c.note && <div style={{ marginTop:10, color:C.sec, fontSize:13, borderTop:`1px solid ${C.border}`, paddingTop:8 }}>{String(c.note)}</div>}
+      </div>
+    );
+  };
+
+  return (
+    <div style={{ display:"grid", gridTemplateColumns: sel ? "280px 1fr" : "1fr", gap:16, alignItems:"start" }}>
+      <div>
+        {canCreate && (
+          <div style={{ marginBottom:12 }}>
+            {!showNew ? (
+              <Btn onClick={() => setShowNew(true)} color={color} full>+ Nuova attività in app</Btn>
+            ) : (
+              <Card>
+                <STitle>Nuova attività</STitle>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
+                  <Inp label="Nome azienda" value={nf.nome} onChange={e=>setNf(p=>({...p,nome:e.target.value}))} placeholder="Es. Ristorante Rossi" />
+                  <Inp label="Data ingresso" type="date" value={nf.data} onChange={e=>setNf(p=>({...p,data:e.target.value}))} />
+                </div>
+                <DettagliForm />
+                <div style={{ display:"flex", gap:8, marginTop:14 }}><Btn onClick={create} color={color}>Crea</Btn><Btn onClick={() => setShowNew(false)} ghost>Annulla</Btn></div>
+              </Card>
+            )}
+          </div>
+        )}
+        {load ? <Spin /> : contracts.length===0 ? <p style={{ color:C.muted, fontSize:13 }}>Nessun contratto attivo.</p> : (
+          contracts.map(c => {
+            const { done, total, pct } = prog(c);
+            return (
+              <div key={c.id} onClick={() => setSelId(c.id===selId ? null : c.id)}
+                style={{ background: selId===c.id ? `${color}08` : "#fff", border:`1px solid ${selId===c.id ? color : C.border}`, borderRadius:12, padding:14, cursor:"pointer", marginBottom:8, boxShadow:C.shadow }}>
+                <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
+                  <span style={{ color:C.text, fontWeight:700, fontSize:14 }}>{String(c.nome||"")}</span>
+                  <span style={{ color:C.muted, fontSize:11 }}>{String(c.data||"")}</span>
+                </div>
+                {c.tipo_locale && <div style={{ color:C.muted, fontSize:12, marginBottom:6 }}>{String(c.tipo_locale)}</div>}
+                <Progress pct={pct} color={pct===100 ? "#059669" : color} />
+                <div style={{ color:C.muted, fontSize:11, marginTop:6 }}>{done}/{total} completati {pct===100 && "✅"}</div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {sel && (
+        <Card>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16 }}>
+            <div>
+              <h2 style={{ color:C.text, margin:"0 0 2px", fontSize:18, fontWeight:800, fontFamily:"'Syne',sans-serif" }}>{String(sel.nome||"")}</h2>
+              <span style={{ color:C.muted, fontSize:12 }}>Ingresso: {String(sel.data||"")}</span>
+            </div>
+            <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+              {canCreate && <button onClick={() => setEditInfo(!editInfo)} style={{ background:"none", border:`1px solid ${C.border}`, borderRadius:8, color:C.sec, cursor:"pointer", fontSize:12, padding:"5px 10px", fontFamily:"inherit" }}>{editInfo ? "✕ Chiudi" : "✏️ Modifica info"}</button>}
+              <button onClick={() => { setSelId(null); setEditInfo(false); }} style={{ background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:22 }}>×</button>
+            </div>
+          </div>
+
+          {/* Form modifica info */}
+          {editInfo && canCreate && (
+            <div style={{ background:C.bg, borderRadius:10, padding:14, marginBottom:16 }}>
+              <DettagliForm />
+              <div style={{ display:"flex", gap:8, marginTop:12 }}>
+                <Btn onClick={saveInfo} color={color}>Salva</Btn>
+                <Btn onClick={() => setEditInfo(false)} ghost>Annulla</Btn>
+              </div>
+            </div>
+          )}
+
+          {/* Vista dettagli */}
+          {!editInfo && <DettagliView c={sel} />}
+
+          {/* Checklist per sezione */}
+          {SECS.map(sec => {
+            const canT   = canSec(sec.key);
+            const tasks_ = sel.tasks && typeof sel.tasks === "object" ? sel.tasks : {};
+            const done   = sec.tasks.filter(t => tasks_[t.id]).length;
+            return (
+              <div key={sec.key} style={{ marginBottom:20 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
+                  <STitle color={sec.color}>{sec.label}</STitle>
+                  <Bdg txt={`${done}/${sec.tasks.length}`} color={sec.color} />
+                </div>
+                {sec.tasks.map(task => (
+                  <div key={task.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 0", borderBottom:`1px solid ${C.border}` }}>
+                    <Chk on={!!tasks_[task.id]} onChange={() => canT && toggleTask(sel.id, task.id)} color={sec.color} off={!canT} />
+                    <span style={{ color:tasks_[task.id]?C.muted:C.text, textDecoration:tasks_[task.id]?"line-through":"none", fontSize:13 }}>{task.t}</span>
+                  </div>
+                ))}
+                {!canT && <p style={{ color:C.muted, fontSize:11, margin:"6px 0 0" }}>Solo {sec.label} può spuntare queste voci.</p>}
+              </div>
+            );
+          })}
+        </Card>
+      )}
+    </div>
+  );
+}
 
   const load_ = async () => { setLoad(true); const d=await dbGet("contracts","?order=created_at.desc"); setContracts(d); setLoad(false); };
   useEffect(() => { load_(); }, []);
