@@ -1,18 +1,1963 @@
 <!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="TeamHub" />
-    <meta name="theme-color" content="#1a3a5c" />
-    <link rel="apple-touch-icon" href="/teamhub-ufficio/icon-192.png" />
-    <link rel="icon" type="image/png" href="/teamhub-ufficio/icon-192.png" />
-    <title>TeamHub — VittoriaAdomicilio</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="TeamHub" />
+  <meta name="theme-color" content="#1a3a5c" />
+  <link rel="apple-touch-icon" href="data:image/png;base64,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" />
+  <title>TeamHub — VittoriaAdomicilio</title>
+  <style>* { box-sizing: border-box; margin: 0; padding: 0; }</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const { useState, useEffect, useCallback, Component } = React;
+
+
+// ─── SUPABASE ─────────────────────────────────────────────────────────────────
+const SB_URL = "https://opnxrlyfdcgdtefpposq.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wbnhybHlmZGNnZHRlZnBwb3NxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTA2MzMsImV4cCI6MjA5NDQyNjYzM30.E5UynMfr4fvoq2RKhwPRms-aCQVg92POKVNfAbKt2sY";
+const HDR = { "Content-Type": "application/json", apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` };
+
+async function dbGet(table, query = "") {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/${table}${query}`, { headers: HDR });
+    const d = await r.json();
+    return Array.isArray(d) ? d : [];
+  } catch { return []; }
+}
+async function dbUpsert(table, data) {
+  try {
+    await fetch(`${SB_URL}/rest/v1/${table}`, {
+      method: "POST",
+      headers: { ...HDR, Prefer: "resolution=merge-duplicates" },
+      body: JSON.stringify(data),
+    });
+  } catch { /* ignore */ }
+}
+async function dbDelete(table, filter) {
+  try { await fetch(`${SB_URL}/rest/v1/${table}?${filter}`, { method: "DELETE", headers: HDR }); }
+  catch { /* ignore */ }
+}
+async function kvGet(key) {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/kv_store?key=eq.${encodeURIComponent(key)}&select=value`, { headers: HDR });
+    const d = await r.json();
+    return Array.isArray(d) && d.length > 0 ? d[0].value : null;
+  } catch { return null; }
+}
+async function kvSet(key, value) {
+  await dbUpsert("kv_store", { key, value });
+}
+
+// ─── COSTANTI ─────────────────────────────────────────────────────────────────
+const USERS = [
+  { id: "social",      name: "Social",      full: "Social Media Manager", color: "#7c3aed", bg: "#ede9fe" },
+  { id: "app",         name: "App Manager", full: "App Manager",          color: "#2563eb", bg: "#dbeafe" },
+  { id: "contabilita", name: "Contabilità", full: "Contabilità",          color: "#059669", bg: "#d1fae5" },
+  { id: "admin",       name: "Admin",       full: "Amministratore",       color: "#ea580c", bg: "#ffedd5" },
+];
+const ADMINS = ["contabilita", "admin"];
+const VEICOLI = [
+  { id: "ford",    nome: "FORD GY679HN",    color: "#2563eb" },
+  { id: "citroen", nome: "CITROEN-GM255PF", color: "#7c3aed" },
+  { id: "puma",    nome: "PUMA HA376KP",    color: "#059669" },
+  { id: "fatt",    nome: "Fattorini",        color: "#d97706", fatt: true },
+];
+const PAGAMENTI = ["Carta", "Contanti", "Buono"];
+const GIORNI = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
+const MESI = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+const MESI_S = ["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"];
+const CANALI = ["Instagram", "Facebook", "TikTok", "LinkedIn"];
+const TIPI   = ["Post", "Story", "Reel", "Promo", "Evento"];
+const STATI  = ["Bozza", "Schedulato", "Pubblicato"];
+
+const FESTIVITA = {
+  "01-01":"🎆 Capodanno","01-06":"🎁 Epifania","02-14":"❤️ S.Valentino",
+  "03-08":"🌸 Festa Donna","03-17":"🍀 S.Patrizio","03-19":"👨 Festa Papà",
+  "04-25":"🇮🇹 Liberazione","05-01":"👷 Lavoratori","06-02":"🇮🇹 Repubblica",
+  "08-15":"☀️ Ferragosto","10-02":"👴 Festa Nonni","10-31":"🎃 Halloween",
+  "11-01":"🕯️ Ognissanti","12-06":"🎅 S.Nicola","12-08":"Immacolata",
+  "12-24":"🎄 Vigilia","12-25":"🎄 Natale","12-26":"🎄 S.Stefano","12-31":"🥂 Capodanno Eve",
+};
+
+const CL_GG = [
+  { id:"cg1", t:"Coupon ritardi nostro/azienda" },{ id:"cg2", t:"Coupon cashback" },
+  { id:"cg3", t:"Controllo fasce orarie" },{ id:"cg4", t:"Caricamento aziende" },
+  { id:"cg5", t:"Modifiche negozi in app" },{ id:"cg6", t:"Guardare calendar" },
+  { id:"cg7", t:"Guardare WhatsApp fissate" },
+];
+const CL_SETT = [
+  { id:"cs1", t:"Coupon generici (ogni martedì)" },
+  { id:"cs2", t:"Farmacia di turno (ogni lunedì)" },
+  { id:"cs3", t:"Volantino Coop", data: true },
+];
+const CL_MESE = [{ id:"cm1", t:"Contattare aziende per promo e info" }];
+const CL_CFIN = [
+  { id:"f1", t:"Scaricare lista ordini app Quickly" },{ id:"f2", t:"Apportare modifiche con etichette mail" },
+  { id:"f3", t:"Calcolare commissione (formula Stripe)" },{ id:"f4", t:"Filtrare aziende e copiare dati" },
+  { id:"f5", t:"Togliere importi ordini annullati" },{ id:"f6", t:"Fare fatture con copia conteggi" },
+  { id:"f7", t:"Fare fatture Modulo" },{ id:"f8", t:"Inviare fatture al sistema e ai clienti" },
+  { id:"f9", t:"Compilare prospetto pagamenti" },{ id:"f10", t:"Inserire NS nel foglio conteggi" },
+  { id:"f11", t:"Mandare fatture carburante al consulente" },{ id:"f12", t:"Aggiornare foglio spese Excel" },
+  { id:"f13", t:"Aggiornare andamento aziende" },
+];
+const CL_PN = [
+  { id:"p1", t:"Registrare incassi Stripe da rimborsare" },{ id:"p2", t:"Registrare incassi Stripe rimborsati" },
+  { id:"p3", t:"Registrare ft saldate in contanti" },{ id:"p4", t:"Registrare ft vecchie con Stripe" },
+  { id:"p5", t:"Registrare estratto conto banca + carta" },{ id:"p6", t:"Prendere Lista clienti" },
+  { id:"p7", t:"Prendere Lista ordini" },
+];
+const CT_APP = [
+  { id:"a1", t:"Gruppo WhatsApp" },{ id:"a2", t:"Mail di benvenuto" },
+  { id:"a3", t:"Chiamare azienda (info, menu e aggiunte)" },{ id:"a4", t:"Caricare prodotti" },
+  { id:"a5", t:"Comunicare per social" },{ id:"a6", t:"Vetrofonia + volantini" },
+  { id:"a7", t:"Terminale (con contratto)" },{ id:"a8", t:"NEW ENTRY (Collaborazione, Insta, Facebook)" },
+  { id:"a9", t:"Locandina" },{ id:"a10", t:"Notifica New Entry" },{ id:"a11", t:"Inserire nei pop up" },
+];
+const CT_SOC = [
+  { id:"s1", t:"App = work in progress" },{ id:"s2", t:"Comunicare per social" },
+  { id:"s3", t:"NEW ENTRY (Collaborazione, Insta, Facebook)" },{ id:"s4", t:"Locandina" },
+];
+const CT_CON = [
+  { id:"c1", t:"Numerare il contratto" },{ id:"c2", t:"Scannerizzare il contratto" },
+  { id:"c3", t:"Inviare PEC con contratto" },{ id:"c4", t:"Preparare fattura" },
+  { id:"c5", t:"Inserire su Fatture in Cloud" },{ id:"c6", t:"Inserire negli Excel" },
+];
+const ALL_CT = [...CT_APP, ...CT_SOC, ...CT_CON];
+
+const NAV = [
+  { id:"home",  icon:"🏠", label:"Home",       roles:["all"] },
+  { id:"app",   icon:"📱", label:"App",         roles:["app","contabilita","admin"] },
+  { id:"social",icon:"📣", label:"Social",      roles:["social","contabilita","admin"] },
+  { id:"cont",  icon:"📊", label:"Contabilità", roles:["contabilita","admin"] },
+  { id:"turni", icon:"🗓️", label:"Turni",       roles:["all"] },
+  { id:"contr", icon:"🆕", label:"Contratti",   roles:["all"] },
+  { id:"task",  icon:"✅", label:"Task",         roles:["all"] },
+];
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+const toDay   = () => new Date().toISOString().split("T")[0];
+const p2      = n  => String(n).padStart(2, "0");
+const dayOf   = (o=0) => { const d=new Date(); d.setDate(d.getDate()+o); return d.toISOString().split("T")[0]; };
+const weekOf  = (o=0) => { const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-((d.getDay()+6)%7)+o*7); return d.toISOString().split("T")[0]; };
+const monthOf = (o=0) => { const d=new Date(); d.setMonth(d.getMonth()+o); return `${d.getFullYear()}-${p2(d.getMonth()+1)}`; };
+const getUser = id  => USERS.find(u => u.id === id);
+const fmtDay  = k  => { const [y,m,d]=k.split("-"); return `${parseInt(d,10)} ${MESI[parseInt(m,10)-1]} ${y}`; };
+const fmtMon  = k  => { const [y,m]=k.split("-"); return `${MESI[parseInt(m,10)-1]} ${y}`; };
+const calcL   = (i,p) => { const iv=parseFloat(i),pv=parseFloat(p); return iv&&pv ? (iv/pv).toFixed(3) : ""; };
+const grpBy   = (arr,fn) => arr.reduce((a,x) => { const k=fn(x); (a[k]=a[k]||[]).push(x); return a; }, {});
+const wkDates = o  => { const b=new Date(weekOf(o)); return Array(7).fill(0).map((_,i) => { const d=new Date(b); d.setDate(b.getDate()+i); return d; }); };
+const mesiTabs= (arr,vf) => {
+  const src = vf ? arr.filter(e=>e.veicolo===vf) : arr;
+  const ks  = [...new Set(src.map(e=>(e.data||"").slice(0,7)).filter(Boolean))].sort().reverse();
+  const cur = monthOf(0);
+  if (!ks.includes(cur)) ks.unshift(cur);
+  return ks.map(m => ({ id:m, l:`${MESI_S[parseInt(m.split("-")[1],10)-1]} ${m.split("-")[0]}` }));
+};
+const getFesta = (year, mmdd) => {
+  const fixed = FESTIVITA[mmdd] || null;
+  if (fixed) return fixed;
+  // Festa della Mamma: 2a domenica maggio
+  const d1=new Date(year,4,1), dom1=(7-d1.getDay())%7, mDay=1+dom1+7;
+  if (mmdd === `05-${p2(mDay)}`) return "💐 Festa Mamma";
+  // Black Friday: 4o venerdì novembre
+  const n1=new Date(year,10,1), ven1=(5-n1.getDay()+7)%7, bf=1+ven1+21;
+  if (bf<=30 && mmdd === `11-${p2(bf)}`) return "🛍️ Black Friday";
+  return null;
+};
+
+// ─── DESIGN ───────────────────────────────────────────────────────────────────
+const C = {
+  bg:"#f1f5f9", surface:"#ffffff", border:"#e2e8f0",
+  text:"#0f172a", sec:"#64748b", muted:"#94a3b8",
+  hover:"#f8fafc", input:"#f8fafc",
+  shadow:"0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04)",
+};
+
+// ─── ERROR BOUNDARY ───────────────────────────────────────────────────────────
+class ErrBound extends Component {
+  state = { err: null };
+  static getDerivedStateFromError(e) { return { err: e }; }
+  render() {
+    if (this.state.err) {
+      return (
+        <div style={{padding:20,background:"#fee2e2",borderRadius:8,margin:8,border:"1px solid #fca5a5"}}>
+          <strong style={{color:"#dc2626"}}>Errore in {this.props.name}</strong>
+          <p style={{color:"#7f1d1d",fontSize:13,marginTop:4}}>{String(this.state.err.message || this.state.err)}</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// ─── UI BASE ──────────────────────────────────────────────────────────────────
+function Chk({ on, onChange, color="#6366f1", off=false }) {
+  return (
+    <div
+      onClick={!off ? onChange : undefined}
+      style={{
+        width:18, height:18, borderRadius:4, flexShrink:0,
+        border:`2px solid ${on ? color : "#cbd5e1"}`,
+        background: on ? color : "#fff",
+        cursor: off ? "default" : "pointer",
+        display:"flex", alignItems:"center", justifyContent:"center",
+        transition:"all .15s",
+      }}
+    >
+      {on && <span style={{ color:"#fff", fontSize:10, fontWeight:700, lineHeight:1 }}>✓</span>}
+    </div>
+  );
+}
+
+function Bdg({ txt, color }) {
+  return (
+    <span style={{
+      background:`${color}18`, color, border:`1px solid ${color}30`,
+      padding:"2px 8px", borderRadius:20, fontSize:11, fontWeight:600, whiteSpace:"nowrap",
+    }}>{txt}</span>
+  );
+}
+
+function Card({ children, style={} }) {
+  return (
+    <div style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:12, padding:16, boxShadow:C.shadow, ...style }}>
+      {children}
+    </div>
+  );
+}
+
+function STitle({ children, color=C.sec }) {
+  return (
+    <div style={{ color, fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", marginBottom:12 }}>
+      {children}
+    </div>
+  );
+}
+
+function Btn({ children, onClick, color="#6366f1", ghost=false, sm=false, full=false }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        background: ghost ? C.hover : color,
+        color: ghost ? C.sec : "#fff",
+        border: ghost ? `1px solid ${C.border}` : "none",
+        borderRadius:8, padding: sm ? "5px 12px" : "8px 18px",
+        cursor:"pointer", fontWeight:600, fontSize: sm ? 12 : 13,
+        width: full ? "100%" : undefined, fontFamily:"inherit",
+        boxShadow: ghost ? "none" : `0 1px 3px ${color}30`,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function Inp({ label, value, onChange, type="text", placeholder, ro=false }) {
+  return (
+    <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
+      {label && <label style={{ color:C.sec, fontSize:11, fontWeight:600 }}>{label}</label>}
+      <input
+        type={type} value={value} onChange={onChange}
+        placeholder={placeholder} readOnly={ro}
+        style={{
+          background: ro ? "#f1f5f9" : C.input,
+          border:`1px solid ${C.border}`, borderRadius:8,
+          color: ro ? C.muted : C.text,
+          padding:"8px 12px", fontSize:13, outline:"none",
+          width:"100%", boxSizing:"border-box", fontFamily:"inherit",
+        }}
+      />
+    </div>
+  );
+}
+
+function Sel({ label, value, onChange, opts }) {
+  return (
+    <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
+      {label && <label style={{ color:C.sec, fontSize:11, fontWeight:600 }}>{label}</label>}
+      <select
+        value={value} onChange={onChange}
+        style={{
+          background:C.input, border:`1px solid ${C.border}`, borderRadius:8,
+          color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none",
+        }}
+      >
+        {opts.map(o => (
+          <option key={typeof o === "object" ? o.v : o} value={typeof o === "object" ? o.v : o}>
+            {typeof o === "object" ? o.l : o}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function Progress({ pct, color="#6366f1" }) {
+  return (
+    <div style={{ background:"#e2e8f0", borderRadius:4, height:5, overflow:"hidden" }}>
+      <div style={{ width:`${pct}%`, height:"100%", background:color, transition:"width .3s", borderRadius:4 }} />
+    </div>
+  );
+}
+
+function Spin() {
+  return (
+    <div style={{ display:"flex", alignItems:"center", justifyContent:"center", padding:32 }}>
+      <div style={{
+        width:28, height:28,
+        border:"3px solid #e2e8f0", borderTop:`3px solid #6366f1`,
+        borderRadius:"50%", animation:"spin .8s linear infinite",
+      }} />
+    </div>
+  );
+}
+
+function PNav({ label, onPrev, onNext, atEnd=false, onReset, resetLabel="Oggi" }) {
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14, flexWrap:"wrap" }}>
+      <button onClick={onPrev} style={{ background:C.hover, border:`1px solid ${C.border}`, color:C.text, borderRadius:8, padding:"4px 12px", cursor:"pointer", fontSize:15 }}>‹</button>
+      <span style={{ color:C.text, fontWeight:600, fontSize:13, minWidth:160, textAlign:"center" }}>{label}</span>
+      <button onClick={onNext} style={{ background:C.hover, border:`1px solid ${C.border}`, color:C.text, borderRadius:8, padding:"4px 12px", cursor:"pointer", fontSize:15 }}>›</button>
+      {!atEnd && <button onClick={onReset} style={{ background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:12, fontFamily:"inherit", textDecoration:"underline" }}>{resetLabel} ↩</button>}
+    </div>
+  );
+}
+
+function MBar({ tabs, active, onSelect, color }) {
+  return (
+    <div style={{ display:"flex", gap:6, marginBottom:16, flexWrap:"wrap" }}>
+      {tabs.map(t => (
+        <button
+          key={t.id} onClick={() => onSelect(t.id)}
+          style={{
+            padding:"5px 12px", borderRadius:20, cursor:"pointer", fontFamily:"inherit",
+            border:`1px solid ${active===t.id ? color : C.border}`,
+            background: active===t.id ? `${color}14` : "#fff",
+            color: active===t.id ? color : C.sec,
+            fontWeight:600, fontSize:12,
+          }}
+        >{t.l}</button>
+      ))}
+    </div>
+  );
+}
+
+function TBar({ tabs, active, onSelect, color }) {
+  return (
+    <div style={{ display:"flex", gap:0, marginBottom:20, borderBottom:`1px solid ${C.border}` }}>
+      {tabs.map(t => (
+        <button
+          key={t.id} onClick={() => onSelect(t.id)}
+          style={{
+            padding:"10px 16px", border:"none", fontFamily:"inherit",
+            borderBottom:`2px solid ${active===t.id ? color : "transparent"}`,
+            background:"transparent", color: active===t.id ? color : C.sec,
+            cursor:"pointer", fontWeight: active===t.id ? 700 : 500, fontSize:13,
+            marginBottom:-1,
+          }}
+        >{t.l}</button>
+      ))}
+    </div>
+  );
+}
+
+function ClRow({ item, checked, onToggle, canEdit, color }) {
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.border}` }}>
+      <Chk on={checked} onChange={onToggle} color={color} off={!canEdit} />
+      <span style={{ color: checked ? C.muted : C.text, textDecoration: checked ? "line-through" : "none", fontSize:14 }}>
+        {item.t}
+      </span>
+    </div>
+  );
+}
+
+// ─── PAGE: HOME ───────────────────────────────────────────────────────────────
+function PageHome({ cur }) {
+  const [daily,  setDaily]  = useState(0);
+  const [weekly, setWeekly] = useState(0);
+  const [carnet, setCarnet] = useState(0);
+  const [tasks,  setTasks]  = useState(0);
+
+  useEffect(() => {
+    const td = toDay(), wk = weekOf(0);
+    Promise.all([
+      kvGet(`daily-${td}`),
+      kvGet(`weekly-${wk}`),
+      dbGet("carnet", "?pagato=eq.no&select=valore"),
+      dbGet("tasks",  "?select=assegnati,done"),
+    ]).then(([d, w, cn, tk]) => {
+      const obj_d = d && typeof d === "object" && !Array.isArray(d) ? d : {};
+      const obj_w = w && typeof w === "object" && !Array.isArray(w) ? w : {};
+      setDaily(CL_GG.filter(i => obj_d[i.id]).length);
+      setWeekly(CL_SETT.filter(i => obj_w[i.id]).length);
+      const pend = Array.isArray(cn) ? cn.reduce((s, c) => s + parseFloat(c.valore || 0), 0) : 0;
+      setCarnet(Math.round(pend));
+      const myT = Array.isArray(tk) ? tk.filter(t => {
+        const ass = Array.isArray(t.assegnati) ? t.assegnati : [];
+        const dn  = t.done && typeof t.done === "object" ? t.done : {};
+        return ass.includes(cur.id) && !dn[cur.id];
+      }).length : 0;
+      setTasks(myT);
+    });
+  }, [cur.id]);
+
+  const kpis = [
+    { l:"Checklist oggi",      v:`${daily}/${CL_GG.length}`,    color:"#2563eb", pct: daily/CL_GG.length*100 },
+    { l:"Checklist settimana", v:`${weekly}/${CL_SETT.length}`, color:"#7c3aed", pct: weekly/CL_SETT.length*100 },
+    { l:"Carnet da incassare", v:`€${carnet}`,                  color:"#dc2626", pct: null },
+    { l:"Task da fare",        v:`${tasks}`,                    color:"#ea580c", pct: null },
+  ];
+
+  return (
+    <div>
+      <div style={{ marginBottom:24 }}>
+        <h2 style={{ color:C.text, margin:"0 0 4px", fontSize:22, fontWeight:800, fontFamily:"'Syne',sans-serif" }}>
+          Buongiorno, <span style={{ color:cur.color }}>{cur.full}</span> 👋
+        </h2>
+        <p style={{ color:C.muted, margin:0, fontSize:13 }}>
+          {new Date().toLocaleDateString("it-IT", { weekday:"long", day:"numeric", month:"long", year:"numeric" })}
+        </p>
+      </div>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))", gap:14 }}>
+        {kpis.map((k,i) => (
+          <div key={i} style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:14, padding:"18px 16px", boxShadow:C.shadow, borderTop:`3px solid ${k.color}` }}>
+            <div style={{ color:C.muted, fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10 }}>{k.l}</div>
+            <div style={{ color:k.color, fontSize:28, fontWeight:800, marginBottom: k.pct !== null ? 10 : 0 }}>{k.v}</div>
+            {k.pct !== null && <Progress pct={k.pct} color={k.color} />}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── CHECKLIST COMPONENT ──────────────────────────────────────────────────────
+function Checklist({ canEdit, color }) {
+  const [dOff, setDOff] = useState(0);
+  const [wOff, setWOff] = useState(0);
+  const [mOff, setMOff] = useState(0);
+  const [daily,   setDC]   = useState({});
+  const [weekly,  setWC]   = useState({});
+  const [monthly, setMC]   = useState({});
+  const [coop, setCoop]    = useState("");
+
+  const dk = dayOf(dOff), wk = weekOf(wOff), mk = monthOf(mOff);
+
+  useEffect(() => { kvGet(`daily-${dk}`).then(v => { setDC(v && typeof v === "object" && !Array.isArray(v) ? v : {}); }); }, [dk]);
+  useEffect(() => { kvGet(`weekly-${wk}`).then(v => { setWC(v && typeof v === "object" && !Array.isArray(v) ? v : {}); kvGet("coop_date").then(c => setCoop(typeof c === "string" ? c : "")); }); }, [wk]);
+  useEffect(() => { kvGet(`monthly-${mk}`).then(v => { setMC(v && typeof v === "object" && !Array.isArray(v) ? v : {}); }); }, [mk]);
+
+  const togD = async id => { if (!canEdit) return; const n={...daily,[id]:!daily[id]}; setDC(n); await kvSet(`daily-${dk}`, n); };
+  const togW = async id => { if (!canEdit) return; const n={...weekly,[id]:!weekly[id]}; setWC(n); await kvSet(`weekly-${wk}`, n); };
+  const togM = async id => { if (!canEdit) return; const n={...monthly,[id]:!monthly[id]}; setMC(n); await kvSet(`monthly-${mk}`, n); };
+
+  return (
+    <div style={{ display:"grid", gap:16 }}>
+      <Card>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
+          <STitle>Ogni giorno</STitle>
+          <Bdg txt={`${CL_GG.filter(i=>daily[i.id]).length}/${CL_GG.length}`} color={color} />
+        </div>
+        <PNav label={dOff===0 ? `Oggi — ${dk}` : fmtDay(dk)} onPrev={()=>setDOff(o=>o-1)} onNext={()=>setDOff(o=>Math.min(0,o+1))} atEnd={dOff===0} onReset={()=>setDOff(0)} resetLabel="Oggi" />
+        {CL_GG.map(item => (
+          <ClRow key={item.id} item={item} checked={!!daily[item.id]} onToggle={()=>togD(item.id)} canEdit={canEdit} color={color} />
+        ))}
+      </Card>
+
+      <Card>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
+          <STitle>Ogni settimana</STitle>
+          <Bdg txt={`${CL_SETT.filter(i=>weekly[i.id]).length}/${CL_SETT.length}`} color={color} />
+        </div>
+        <PNav label={wOff===0 ? "Questa settimana" : `Sett. ${wk}`} onPrev={()=>setWOff(o=>o-1)} onNext={()=>setWOff(o=>Math.min(0,o+1))} atEnd={wOff===0} onReset={()=>setWOff(0)} resetLabel="Questa" />
+        {CL_SETT.map(item => (
+          <div key={item.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.border}`, flexWrap:"wrap" }}>
+            <Chk on={!!weekly[item.id]} onChange={()=>togW(item.id)} color={color} off={!canEdit} />
+            <span style={{ color:weekly[item.id]?C.muted:C.text, textDecoration:weekly[item.id]?"line-through":"none", fontSize:14, flex:1 }}>{item.t}</span>
+            {item.data && (
+              <input type="date" value={coop} disabled={!canEdit} onChange={e => { setCoop(e.target.value); kvSet("coop_date", e.target.value); }}
+                style={{ background:C.input, border:`1px solid ${C.border}`, borderRadius:8, color:C.text, padding:"5px 10px", fontSize:12 }} />
+            )}
+          </div>
+        ))}
+      </Card>
+
+      <Card>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
+          <STitle>Ogni mese</STitle>
+          <Bdg txt={`${CL_MESE.filter(i=>monthly[i.id]).length}/${CL_MESE.length}`} color={color} />
+        </div>
+        <PNav label={mOff===0 ? `Questo mese — ${fmtMon(mk)}` : fmtMon(mk)} onPrev={()=>setMOff(o=>o-1)} onNext={()=>setMOff(o=>Math.min(0,o+1))} atEnd={mOff===0} onReset={()=>setMOff(0)} resetLabel="Questo" />
+        {CL_MESE.map(item => (
+          <ClRow key={item.id} item={item} checked={!!monthly[item.id]} onToggle={()=>togM(item.id)} canEdit={canEdit} color={color} />
+        ))}
+      </Card>
+    </div>
+  );
+}
+
+// ─── CARBURANTE ───────────────────────────────────────────────────────────────
+function Carburante({ canEdit }) {
+  const [veic, setVeic] = useState("ford");
+  const [selM, setSelM] = useState(monthOf(0));
+  const [form, setForm] = useState({ data:toDay(), km:"", importo:"", prezzo:"", litri:"", pag:"Carta", fatt:"", note:"" });
+  const [show, setShow] = useState(false);
+  const [rows, setRows] = useState([]);
+  const [load, setLoad] = useState(true);
+  const v = VEICOLI.find(x => x.id === veic) || VEICOLI[0];
+
+  const fetch_ = useCallback(async () => {
+    setLoad(true);
+    const d = await dbGet("fuel", `?veicolo=eq.${veic}&order=data.desc`);
+    setRows(d);
+    setLoad(false);
+  }, [veic]);
+
+  useEffect(() => { fetch_(); }, [fetch_]);
+
+  const upd = (k, val) => setForm(p => {
+    const n = { ...p, [k]: val };
+    if (k === "importo" || k === "prezzo") n.litri = calcL(k==="importo"?val:p.importo, k==="prezzo"?val:p.prezzo);
+    return n;
+  });
+
+  const save = async () => {
+    if (!form.km || !form.importo) return;
+    await dbUpsert("fuel", { id:Date.now(), data:form.data, km:form.km, importo:form.importo, prezzo:form.prezzo, litri:form.litri, pagamento:form.pag, fattorino:form.fatt, note:form.note, veicolo:veic });
+    setForm({ data:toDay(), km:"", importo:"", prezzo:"", litri:"", pag:"Carta", fatt:"", note:"" });
+    setShow(false);
+    fetch_();
+  };
+
+  const vis = rows.filter(e => (e.data||"").startsWith(selM));
+  const totE = vis.reduce((s,e) => s+parseFloat(e.importo||0), 0).toFixed(2);
+  const totL = vis.reduce((s,e) => s+parseFloat(e.litri||0), 0).toFixed(2);
+
+  return (
+    <div>
+      <div style={{ display:"flex", gap:8, marginBottom:16, flexWrap:"wrap" }}>
+        {VEICOLI.map(vv => (
+          <button key={vv.id} onClick={() => { setVeic(vv.id); setShow(false); }}
+            style={{ padding:"7px 16px", borderRadius:20, fontWeight:600, fontSize:13, cursor:"pointer", fontFamily:"inherit",
+              border:`1px solid ${veic===vv.id ? vv.color : C.border}`,
+              background: veic===vv.id ? `${vv.color}14` : "#fff",
+              color: veic===vv.id ? vv.color : C.sec }}>
+            {vv.nome}
+          </button>
+        ))}
+      </div>
+      <MBar tabs={mesiTabs(rows, veic)} active={selM} onSelect={setSelM} color={v.color} />
+
+      {canEdit && !show && <div style={{ marginBottom:16 }}><Btn onClick={() => setShow(true)} color={v.color}>+ Nuovo rifornimento</Btn></div>}
+      {canEdit && show && (
+        <Card style={{ marginBottom:16 }}>
+          <STitle>Nuovo rifornimento — {v.nome}</STitle>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
+            <Inp label="Data" type="date" value={form.data} onChange={e=>upd("data",e.target.value)} />
+            <Inp label="KM attuali" type="number" value={form.km} onChange={e=>upd("km",e.target.value)} placeholder="es. 14500" />
+            <Inp label="Importo €" type="number" value={form.importo} onChange={e=>upd("importo",e.target.value)} placeholder="es. 65.00" />
+            <Inp label="Prezzo €/L" type="number" value={form.prezzo} onChange={e=>upd("prezzo",e.target.value)} placeholder="es. 1.65" />
+            <Inp label="Litri (auto)" value={form.litri} ro placeholder="calcolato" />
+            <Sel label="Pagamento" value={form.pag} onChange={e=>upd("pag",e.target.value)} opts={PAGAMENTI} />
+          </div>
+          {v.fatt && <div style={{ marginBottom:12 }}><Inp label="Nome fattorino" value={form.fatt} onChange={e=>upd("fatt",e.target.value)} placeholder="Nome del fattorino" /></div>}
+          <div style={{ marginBottom:14 }}><Inp label="Note" value={form.note} onChange={e=>upd("note",e.target.value)} /></div>
+          <div style={{ display:"flex", gap:8 }}><Btn onClick={save} color={v.color}>Salva</Btn><Btn onClick={() => setShow(false)} ghost>Annulla</Btn></div>
+        </Card>
+      )}
+
+      <Card>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:14, flexWrap:"wrap", gap:10 }}>
+          <STitle>{v.nome} — {fmtMon(selM)}</STitle>
+          {vis.length > 0 && (
+            <div style={{ display:"flex", gap:8 }}>
+              <div style={{ background:`${v.color}10`, border:`1px solid ${v.color}30`, borderRadius:8, padding:"6px 12px", textAlign:"center" }}>
+                <div style={{ color:v.color, fontSize:15, fontWeight:800 }}>€{totE}</div>
+                <div style={{ color:C.muted, fontSize:10 }}>spesa</div>
+              </div>
+              <div style={{ background:"#7c3aed10", border:"1px solid #7c3aed30", borderRadius:8, padding:"6px 12px", textAlign:"center" }}>
+                <div style={{ color:"#7c3aed", fontSize:15, fontWeight:800 }}>{totL} L</div>
+                <div style={{ color:C.muted, fontSize:10 }}>litri</div>
+              </div>
+            </div>
+          )}
+        </div>
+        {load ? <Spin /> : vis.length === 0 ? <p style={{ color:C.muted, fontSize:13 }}>Nessun rifornimento per questo mese.</p> : (
+          <div style={{ overflowX:"auto" }}>
+            <table style={{ width:"100%", borderCollapse:"collapse" }}>
+              <thead>
+                <tr style={{ borderBottom:`2px solid ${C.border}` }}>
+                  {["Data","KM","Importo","€/L","Litri","Pag.", ...(v.fatt?["Fattorino"]:[]), "Note"].map(h => (
+                    <th key={h} style={{ color:C.sec, padding:"8px", textAlign:"left", fontWeight:700, fontSize:12, whiteSpace:"nowrap" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {vis.map(e => (
+                  <tr key={e.id} style={{ borderBottom:`1px solid ${C.border}` }}>
+                    <td style={{ padding:"9px 8px", color:C.text, fontSize:13 }}>{String(e.data||"")}</td>
+                    <td style={{ padding:"9px 8px", color:C.text, fontSize:13, fontWeight:600 }}>{String(e.km||"")} km</td>
+                    <td style={{ padding:"9px 8px", color:"#059669", fontSize:13, fontWeight:700 }}>€{String(e.importo||"")}</td>
+                    <td style={{ padding:"9px 8px", color:C.sec, fontSize:13 }}>€{String(e.prezzo||"")}</td>
+                    <td style={{ padding:"9px 8px", color:"#7c3aed", fontSize:13, fontWeight:600 }}>{String(e.litri||"")} L</td>
+                    <td style={{ padding:"9px 8px" }}><Bdg txt={String(e.pagamento||"")} color={v.color} /></td>
+                    {v.fatt && <td style={{ padding:"9px 8px", color:"#d97706", fontSize:13, fontWeight:600 }}>{String(e.fattorino||"")}</td>}
+                    <td style={{ padding:"9px 8px", color:C.muted, fontSize:13 }}>{String(e.note||"")}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr style={{ borderTop:`2px solid ${C.border}`, background:"#f8fafc" }}>
+                  <td colSpan={2} style={{ padding:"8px", color:C.sec, fontWeight:700, fontSize:12 }}>TOTALE</td>
+                  <td style={{ padding:"8px", color:"#059669", fontWeight:800 }}>€{totE}</td>
+                  <td /><td style={{ padding:"8px", color:"#7c3aed", fontWeight:800 }}>{totL} L</td>
+                  <td colSpan={v.fatt ? 3 : 2} />
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+// ─── CARNET ───────────────────────────────────────────────────────────────────
+function Carnet({ canEdit }) {
+  const color = "#2563eb";
+  const [selM,   setSelM]   = useState(monthOf(0));
+  const [rows,   setRows]   = useState([]);
+  const [azList, setAzList] = useState([]);
+  const [load,   setLoad]   = useState(true);
+  const [show,   setShow]   = useState(false);
+  const [showNA, setShowNA] = useState(false);
+  const [newAz,  setNewAz]  = useState("");
+  const [form,   setForm]   = useState({ data:toDay(), azienda:"", nCarnet:"1", valore:"50", pagato:"no", fattura:"no", note:"", data_pag:"" });
+
+  const fetch_ = useCallback(async () => {
+    setLoad(true);
+    const [c, a] = await Promise.all([dbGet("carnet","?order=data.desc"), dbGet("aziende","?order=name.asc")]);
+    setRows(c);
+    const azNames = a.map(x => String(x.name || "")).filter(Boolean);
+    setAzList(azNames);
+    if (!form.azienda && azNames.length) setForm(p => ({ ...p, azienda: azNames[0] }));
+    setLoad(false);
+  }, []); // eslint-disable-line
+
+  useEffect(() => { fetch_(); }, [fetch_]);
+
+  const save = async () => {
+    if (!form.azienda) return;
+    await dbUpsert("carnet", { id:Date.now(), data:form.data, azienda:form.azienda, n_carnet:form.nCarnet, valore:form.valore, pagato:form.pagato, fattura:form.fattura, note:form.note, data_pag:form.data_pag });
+    setForm(p => ({ ...p, nCarnet:"1", valore:"50", pagato:"no", fattura:"no", note:"", data_pag:"", data:toDay() }));
+    setShow(false);
+    fetch_();
+  };
+
+  const addAz = async () => {
+    const n = newAz.trim().toUpperCase();
+    if (!n) return;
+    await dbUpsert("aziende", { name: n });
+    setNewAz(""); setShowNA(false);
+    setAzList(p => [...new Set([...p,n])].sort());
+    setForm(p => ({ ...p, azienda: n }));
+  };
+
+  const vis = rows.filter(e => (e.data||"").startsWith(selM));
+  const byDay = grpBy(vis, e => (e.data||"").slice(0,10));
+  const days = Object.keys(byDay).sort().reverse();
+  const totInc  = vis.filter(e=>e.pagato==="si").reduce((s,e)=>s+parseFloat(e.valore||0),0);
+  const totPend = vis.filter(e=>e.pagato!=="si").reduce((s,e)=>s+parseFloat(e.valore||0),0);
+
+  return (
+    <div>
+      <MBar tabs={mesiTabs(rows)} active={selM} onSelect={setSelM} color={color} />
+      <div style={{ display:"flex", gap:10, marginBottom:16, flexWrap:"wrap" }}>
+        <div style={{ background:"#d1fae5", border:"1px solid #6ee7b7", borderRadius:10, padding:"10px 18px" }}>
+          <div style={{ color:"#059669", fontSize:20, fontWeight:800 }}>€{Math.round(totInc)}</div>
+          <div style={{ color:C.sec, fontSize:11 }}>Incassato</div>
+        </div>
+        <div style={{ background:"#fee2e2", border:"1px solid #fca5a5", borderRadius:10, padding:"10px 18px" }}>
+          <div style={{ color:"#dc2626", fontSize:20, fontWeight:800 }}>€{Math.round(totPend)}</div>
+          <div style={{ color:C.sec, fontSize:11 }}>Da incassare</div>
+        </div>
+      </div>
+
+      {canEdit && !show && <div style={{ marginBottom:16 }}><Btn onClick={() => setShow(true)} color={color}>+ Nuova uscita carnet</Btn></div>}
+      {canEdit && show && (
+        <Card style={{ marginBottom:16 }}>
+          <STitle>Nuova uscita carnet</STitle>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
+            <Inp label="Data uscita" type="date" value={form.data} onChange={e=>setForm(p=>({...p,data:e.target.value}))} />
+            <div>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
+                <label style={{ color:C.sec, fontSize:11, fontWeight:600 }}>Azienda</label>
+                <button onClick={() => setShowNA(!showNA)} style={{ background:"none", border:"none", color, fontSize:11, cursor:"pointer", fontFamily:"inherit", fontWeight:600 }}>{showNA ? "✕ annulla" : "+ nuova"}</button>
+              </div>
+              {showNA ? (
+                <div style={{ display:"flex", gap:6 }}>
+                  <input value={newAz} onChange={e=>setNewAz(e.target.value)} placeholder="Nome azienda..." onKeyDown={e=>e.key==="Enter"&&addAz()}
+                    style={{ flex:1, background:C.input, border:`1px solid ${color}`, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none" }} />
+                  <Btn onClick={addAz} color={color} sm>+</Btn>
+                </div>
+              ) : (
+                <select value={form.azienda} onChange={e=>setForm(p=>({...p,azienda:e.target.value}))}
+                  style={{ background:C.input, border:`1px solid ${C.border}`, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none", width:"100%" }}>
+                  {azList.map(az => <option key={az} value={az}>{az}</option>)}
+                </select>
+              )}
+            </div>
+            <Inp label="N° carnet" type="number" value={form.nCarnet} onChange={e=>setForm(p=>({...p,nCarnet:e.target.value}))} />
+            <Inp label="Valore €"  type="number" value={form.valore}  onChange={e=>setForm(p=>({...p,valore:e.target.value}))} />
+            <Sel label="Pagato"  value={form.pagato}  onChange={e=>setForm(p=>({...p,pagato:e.target.value}))}  opts={[{v:"si",l:"Sì"},{v:"no",l:"No"}]} />
+            <Sel label="Fattura" value={form.fattura} onChange={e=>setForm(p=>({...p,fattura:e.target.value}))} opts={[{v:"si",l:"Sì"},{v:"no",l:"No"}]} />
+            <Inp label="Data pagamento" type="date" value={form.data_pag} onChange={e=>setForm(p=>({...p,data_pag:e.target.value}))} />
+            <Inp label="Note" value={form.note} onChange={e=>setForm(p=>({...p,note:e.target.value}))} />
+          </div>
+          <div style={{ display:"flex", gap:8 }}><Btn onClick={save} color={color}>Salva</Btn><Btn onClick={() => setShow(false)} ghost>Annulla</Btn></div>
+        </Card>
+      )}
+
+      {load ? <Spin /> : days.length === 0 ? <Card><p style={{ color:C.muted, fontSize:13 }}>Nessuna uscita per questo mese.</p></Card> : (
+        days.map(day => {
+          const de = byDay[day];
+          const dt = de.reduce((s,e) => s+parseFloat(e.valore||0), 0);
+          const [y,mo,d] = day.split("-");
+          return (
+            <Card key={day} style={{ marginBottom:10 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+                <div style={{ color, fontWeight:700, fontSize:15 }}>{parseInt(d,10)} {MESI[parseInt(mo,10)-1]} {y}</div>
+                <div style={{ color:C.sec, fontSize:13 }}>Totale: <span style={{ color:"#059669", fontWeight:700 }}>€{Math.round(dt)}</span></div>
+              </div>
+              <div style={{ overflowX:"auto" }}>
+                <table style={{ width:"100%", borderCollapse:"collapse" }}>
+                  <thead>
+                    <tr style={{ borderBottom:`2px solid ${C.border}` }}>
+                      {["Azienda","N°","Valore","Pagato","Fattura","Data pag.","Note"].map(h => (
+                        <th key={h} style={{ color:C.sec, padding:"7px 8px", textAlign:"left", fontWeight:700, fontSize:12 }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {de.map(e => (
+                      <tr key={e.id} style={{ borderBottom:`1px solid ${C.border}` }}>
+                        <td style={{ padding:"8px", color:C.text, fontWeight:600, fontSize:13 }}>{String(e.azienda||"")}</td>
+                        <td style={{ padding:"8px", color:C.sec, fontSize:13, textAlign:"center" }}>{String(e.n_carnet||"")}</td>
+                        <td style={{ padding:"8px", color:C.text, fontWeight:700, fontSize:13 }}>€{String(e.valore||"")}</td>
+                        <td style={{ padding:"8px" }}><Bdg txt={e.pagato==="si" ? "✓ Sì" : "✗ No"} color={e.pagato==="si" ? "#059669" : "#dc2626"} /></td>
+                        <td style={{ padding:"8px" }}><Bdg txt={e.fattura==="si" ? "✓ Sì" : "✗ No"} color={e.fattura==="si" ? "#059669" : "#94a3b8"} /></td>
+                        <td style={{ padding:"8px", color:C.sec, fontSize:13 }}>{String(e.data_pag||"—")}</td>
+                        <td style={{ padding:"8px", color:C.muted, fontSize:13 }}>{String(e.note||"")}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          );
+        })
+      )}
+    </div>
+  );
+}
+
+// ─── DIARIO ───────────────────────────────────────────────────────────────────
+function Diario({ ruolo, color }) {
+  const [off,    setOff]    = useState(0);
+  const [draft,  setDraft]  = useState("");
+  const [saved,  setSaved]  = useState(true);
+  const [storico,setStorico]= useState([]);
+  const dk = dayOf(off);
+  const sk = `${ruolo}-${dk}`;
+
+  useEffect(() => {
+    kvGet(sk).then(v => { setDraft(typeof v === "string" ? v : ""); setSaved(true); });
+  }, [sk]);
+
+  useEffect(() => {
+    dbGet("kv_store", `?key=like.${ruolo}-*&order=key.desc&limit=20`).then(rows => {
+      setStorico(rows.filter(r => r.key !== sk && typeof r.value === "string" && r.value.trim()));
+    });
+  }, [ruolo, sk]);
+
+  const salva = async () => { await kvSet(sk, draft); setSaved(true); };
+
+  return (
+    <div style={{ display:"grid", gap:16 }}>
+      <Card>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
+          <STitle>Note del giorno</STitle>
+          {!saved && <span style={{ color:"#d97706", fontSize:11, fontWeight:600 }}>● non salvato</span>}
+          {saved && draft && <span style={{ color:"#059669", fontSize:11, fontWeight:600 }}>✓ salvato</span>}
+        </div>
+        <PNav label={off===0 ? `Oggi — ${dk}` : fmtDay(dk)} onPrev={()=>setOff(o=>o-1)} onNext={()=>setOff(o=>Math.min(0,o+1))} atEnd={off===0} onReset={()=>setOff(0)} resetLabel="Oggi" />
+        <textarea value={draft} onChange={e => { setDraft(e.target.value); setSaved(false); }}
+          placeholder="Scrivi qui cosa è stato fatto oggi..."
+          rows={8}
+          style={{ background:C.input, border:`1px solid ${saved ? C.border : "#f59e0b"}`, borderRadius:8, color:C.text, padding:"10px 12px", fontSize:14, outline:"none", width:"100%", boxSizing:"border-box", resize:"vertical", lineHeight:1.7, fontFamily:"inherit" }}
+        />
+        <div style={{ display:"flex", justifyContent:"flex-end", marginTop:10 }}>
+          <Btn onClick={salva} color={color}>{saved ? "✓ Salvato" : "Salva note"}</Btn>
+        </div>
+      </Card>
+      {storico.length > 0 && (
+        <Card>
+          <STitle>Storico note</STitle>
+          {storico.slice(0,8).map(row => {
+            const g = row.key.replace(`${ruolo}-`, "");
+            const txt = String(row.value || "");
+            return (
+              <div key={row.key}
+                onClick={() => setOff(Math.round((new Date(g).getTime() - new Date(toDay()).getTime()) / 86400000))}
+                style={{ padding:"10px 0", borderBottom:`1px solid ${C.border}`, cursor:"pointer" }}>
+                <div style={{ display:"flex", justifyContent:"space-between", marginBottom:3 }}>
+                  <span style={{ color, fontWeight:600, fontSize:13 }}>{fmtDay(g)}</span>
+                  <span style={{ color:C.muted, fontSize:11 }}>{txt.trim().split(/\s+/).length} parole</span>
+                </div>
+                <p style={{ color:C.sec, fontSize:12, margin:0, lineHeight:1.5 }}>{txt.slice(0,80)}{txt.length>80?"…":""}</p>
+              </div>
+            );
+          })}
+        </Card>
+      )}
+    </div>
+  );
+}
+
+// ─── PAGE: APP ────────────────────────────────────────────────────────────────
+function PageApp({ cur }) {
+  const canEdit = ["app","contabilita","admin"].includes(cur.id);
+  const [tab, setTab] = useState("cl");
+  const color = cur.color;
+  return (
+    <div>
+      <TBar tabs={[{id:"cl",l:"✅ Checklist"},{id:"fuel",l:"⛽ Carburante"},{id:"carnet",l:"🎫 Carnet"},{id:"note",l:"📝 Note"}]} active={tab} onSelect={setTab} color={color} />
+      {tab==="cl"     && <Checklist canEdit={canEdit} color={color} />}
+      {tab==="fuel"   && <Carburante canEdit={canEdit} />}
+      {tab==="carnet" && <Carnet canEdit={canEdit} />}
+      {tab==="note"   && <Diario ruolo="app" color={color} />}
+    </div>
+  );
+}
+
+// ─── PAGE: SOCIAL ─────────────────────────────────────────────────────────────
+function PageSocial({ cur }) {
+  const canEdit = ["social","contabilita","admin"].includes(cur.id);
+  const [tab,   setTab]   = useState("cal");
+  const [month, setMonth] = useState(new Date().getMonth());
+  const [year,  setYear]  = useState(new Date().getFullYear());
+  const [selDay,setSelDay]= useState(null);
+  const [posts, setPosts] = useState([]);
+  const [pf,    setPf]    = useState({ canale:"Instagram", tipo:"Post", stato:"Bozza", note:"" });
+  const color = cur.color;
+
+  const loadPosts = useCallback(async () => {
+    const pfx = `${year}-${p2(month+1)}`;
+    const d = await dbGet("social_posts", `?date=like.${pfx}*&order=date.asc`);
+    setPosts(d);
+  }, [month, year]);
+
+  useEffect(() => { if (tab==="cal") loadPosts(); }, [tab, loadPosts]);
+
+  const dayPosts = d => posts.filter(p => p.date === `${year}-${p2(month+1)}-${p2(d)}`);
+  const dims     = new Date(year, month+1, 0).getDate();
+  const firstDay = (new Date(year, month, 1).getDay() + 6) % 7;
+
+  const addPost = async () => {
+    if (!selDay) return;
+    await dbUpsert("social_posts", { ...pf, date:`${year}-${p2(month+1)}-${p2(selDay)}`, id:Date.now() });
+    setPf({ canale:"Instagram", tipo:"Post", stato:"Bozza", note:"" });
+    loadPosts();
+  };
+  const delPost = async id => { await dbDelete("social_posts", `id=eq.${id}`); loadPosts(); };
+
+  return (
+    <div>
+      <TBar tabs={[{id:"cal",l:"📅 Calendario"},{id:"note",l:"📝 Note"}]} active={tab} onSelect={setTab} color={color} />
+      {tab==="note" && <Diario ruolo="social" color={color} />}
+      {tab==="cal" && (
+        <div>
+          <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:20 }}>
+            <button onClick={() => { if(month===0){setMonth(11);setYear(y=>y-1);}else setMonth(m=>m-1); }}
+              style={{ background:C.surface, border:`1px solid ${C.border}`, color:C.text, borderRadius:8, padding:"6px 14px", cursor:"pointer", fontSize:18, boxShadow:C.shadow }}>‹</button>
+            <h2 style={{ color:C.text, margin:0, fontSize:18, fontWeight:700, minWidth:180, textAlign:"center", fontFamily:"'Syne',sans-serif" }}>{MESI[month]} {year}</h2>
+            <button onClick={() => { if(month===11){setMonth(0);setYear(y=>y+1);}else setMonth(m=>m+1); }}
+              style={{ background:C.surface, border:`1px solid ${C.border}`, color:C.text, borderRadius:8, padding:"6px 14px", cursor:"pointer", fontSize:18, boxShadow:C.shadow }}>›</button>
+          </div>
+          <Card style={{ padding:12 }}>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:4, marginBottom:4 }}>
+              {GIORNI.map(g => (
+                <div key={g} style={{ color:C.muted, fontSize:10, fontWeight:700, textAlign:"center", padding:"4px 0", textTransform:"uppercase", letterSpacing:"0.06em" }}>{g}</div>
+              ))}
+              {Array(firstDay).fill(0).map((_,i) => <div key={`ep${i}`} />)}
+              {Array(dims).fill(0).map((_,i) => {
+                const d    = i + 1;
+                const mmdd = `${p2(month+1)}-${p2(d)}`;
+                const f    = getFesta(year, mmdd);
+                const ps   = dayPosts(d);
+                const isSel= selDay === d;
+                const isTod= `${year}-${p2(month+1)}-${p2(d)}` === toDay();
+                return (
+                  <div key={d} onClick={() => setSelDay(isSel ? null : d)}
+                    style={{
+                      background: isSel ? `${color}14` : isTod ? "#f0fdf4" : "#fafafa",
+                      border: `1px solid ${isSel ? color : isTod ? "#86efac" : C.border}`,
+                      borderRadius:8, padding:6, cursor:"pointer", minHeight:60,
+                    }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
+                      <span style={{ color: isTod ? "#16a34a" : C.text, fontSize:13, fontWeight: isTod ? 700 : 400, background: isTod ? "#dcfce7" : "transparent", borderRadius:4, padding:"0 4px" }}>{d}</span>
+                      {f && <span style={{ fontSize:10 }}>🎉</span>}
+                    </div>
+                    {f && <div style={{ fontSize:9, color:"#d97706", marginTop:2, lineHeight:1.2, fontWeight:600 }}>{f}</div>}
+                    {ps.map(p => (
+                      <div key={p.id} style={{ background:`${color}20`, borderRadius:3, padding:"2px 5px", fontSize:9, color, marginTop:2, fontWeight:600 }}>
+                        {p.canale==="Instagram"?"📷":p.canale==="Facebook"?"📘":p.canale==="TikTok"?"🎵":"💼"} {String(p.tipo||"")}
+                      </div>
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+          {selDay && (
+            <Card style={{ marginTop:12 }}>
+              <STitle>{selDay} {MESI[month]} {year}{getFesta(year, `${p2(month+1)}-${p2(selDay)}`) && <span style={{ color:"#d97706", marginLeft:8, fontSize:11 }}>🎉 {getFesta(year, `${p2(month+1)}-${p2(selDay)}`)}</span>}</STitle>
+              {dayPosts(selDay).map(p => (
+                <div key={p.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:10, background:C.bg, borderRadius:8, marginBottom:6 }}>
+                  <div style={{ display:"flex", gap:6, flexWrap:"wrap", alignItems:"center" }}>
+                    <Bdg txt={String(p.canale||"")} color={color} />
+                    <Bdg txt={String(p.tipo||"")} color={C.sec} />
+                    <Bdg txt={String(p.stato||"")} color={p.stato==="Pubblicato"?"#059669":p.stato==="Schedulato"?"#d97706":"#94a3b8"} />
+                    {p.note && <span style={{ color:C.sec, fontSize:12 }}>{String(p.note)}</span>}
+                  </div>
+                  {canEdit && <button onClick={() => delPost(p.id)} style={{ background:"none", border:"none", color:"#dc2626", cursor:"pointer", fontSize:18 }}>×</button>}
+                </div>
+              ))}
+              {canEdit && (
+                <div style={{ display:"flex", gap:8, flexWrap:"wrap", alignItems:"flex-end", marginTop:8 }}>
+                  {[{k:"canale",opts:CANALI},{k:"tipo",opts:TIPI},{k:"stato",opts:STATI}].map(({k,opts}) => (
+                    <select key={k} value={pf[k]} onChange={e=>setPf(p=>({...p,[k]:e.target.value}))}
+                      style={{ background:C.input, border:`1px solid ${C.border}`, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none" }}>
+                      {opts.map(o => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                  ))}
+                  <input placeholder="Note..." value={pf.note} onChange={e=>setPf(p=>({...p,note:e.target.value}))}
+                    style={{ flex:1, minWidth:120, background:C.input, border:`1px solid ${C.border}`, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none" }} />
+                  <Btn onClick={addPost} color={color}>+ Aggiungi</Btn>
+                </div>
+              )}
+            </Card>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── CHECKLIST MANUALE (Contabilità) ─────────────────────────────────────────
+function ChecklistManuale({ mk, canEdit, color }) {
+  const [items,   setItems]   = useState([]); // [{id, testo, done}]
+  const [newTxt,  setNewTxt]  = useState("");
+  const storeKey = `contab-manual-${mk}`;
+
+  useEffect(() => {
+    kvGet(storeKey).then(v => {
+      setItems(Array.isArray(v) ? v : []);
+    });
+  }, [storeKey]);
+
+  const save = async (updated) => {
+    setItems(updated);
+    await kvSet(storeKey, updated);
+  };
+
+  const aggiungi = async () => {
+    if (!newTxt.trim()) return;
+    const updated = [...items, { id: Date.now(), testo: newTxt.trim(), done: false }];
+    await save(updated);
+    setNewTxt("");
+  };
+
+  const togDone = async (id) => {
+    if (!canEdit) return;
+    const updated = items.map(i => i.id===id ? { ...i, done: !i.done } : i);
+    await save(updated);
+  };
+
+  const elimina = async (id) => {
+    const updated = items.filter(i => i.id !== id);
+    await save(updated);
+  };
+
+  const doneCnt = items.filter(i => i.done).length;
+
+  return (
+    <Card>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+        <STitle color={color}>Checklist mese</STitle>
+        {items.length > 0 && <Bdg txt={`${doneCnt}/${items.length}`} color={color} />}
+      </div>
+
+      {items.length === 0 && (
+        <p style={{ color:C.muted, fontSize:13, marginBottom:12 }}>Nessuna voce. Aggiungine una sotto.</p>
+      )}
+
+      {items.map(item => (
+        <div key={item.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.border}` }}>
+          <Chk on={item.done} onChange={() => togDone(item.id)} color={color} off={!canEdit} />
+          <span style={{ flex:1, color:item.done?C.muted:C.text, textDecoration:item.done?"line-through":"none", fontSize:14 }}>
+            {item.testo}
+          </span>
+          {canEdit && (
+            <button onClick={() => elimina(item.id)}
+              style={{ background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:16, padding:"0 4px", lineHeight:1 }}>×</button>
+          )}
+        </div>
+      ))}
+
+      {canEdit && (
+        <div style={{ display:"flex", gap:8, marginTop:14 }}>
+          <input
+            value={newTxt}
+            onChange={e => setNewTxt(e.target.value)}
+            onKeyDown={e => e.key==="Enter" && aggiungi()}
+            placeholder="Aggiungi voce checklist..."
+            style={{ flex:1, background:C.input, border:`1px solid ${C.border}`, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none" }}
+          />
+          <Btn onClick={aggiungi} color={color}>+ Aggiungi</Btn>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+// ─── PAGE: CONTABILITÀ ────────────────────────────────────────────────────────
+function PageCont({ cur }) {
+  const canEdit = ADMINS.includes(cur.id);
+  const color   = cur.color;
+  const [tab, setTab] = useState("fuel");
+  const [ch,  setCh]  = useState({});
+  const [mOff,setMOff]= useState(0);
+  const mk = monthOf(mOff);
+
+  useEffect(() => { kvGet(`contab-${mk}`).then(v => { setCh(v && typeof v === "object" && !Array.isArray(v) ? v : {}); }); }, [mk]);
+
+  const tog = async (pre, id) => {
+    if (!canEdit) return;
+    const k = `${pre}_${id}`;
+    const n = { ...ch, [k]: !ch[k] };
+    setCh(n);
+    await kvSet(`contab-${mk}`, n);
+  };
+
+  return (
+    <div>
+      <TBar tabs={[{id:"fuel",l:"⛽ Carburante"},{id:"carnet",l:"🎫 Carnet"},{id:"cl",l:"📋 Checklist"}]} active={tab} onSelect={setTab} color={color} />
+      {tab==="fuel"   && <Carburante canEdit={canEdit} />}
+      {tab==="carnet" && <Carnet canEdit={canEdit} />}
+      {tab==="cl" && (
+        <div style={{ display:"grid", gap:16 }}>
+          <PNav label={mOff===0 ? `Questo mese — ${fmtMon(mk)}` : fmtMon(mk)} onPrev={()=>setMOff(o=>o-1)} onNext={()=>setMOff(o=>Math.min(0,o+1))} atEnd={mOff===0} onReset={()=>setMOff(0)} resetLabel="Questo" />
+          <ChecklistManuale mk={mk} canEdit={canEdit} color={color} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── PAGE: TURNI ─────────────────────────────────────────────────────────────
+function PageTurni({ cur }) {
+  const canEdit = ADMINS.includes(cur.id);
+  const [off,   setOff]  = useState(1);
+  const [rows,  setRows] = useState([]);
+  const wk    = weekOf(off);
+  const dates = wkDates(off);
+
+  useEffect(() => {
+    dbGet("turni", `?week_key=eq.${wk}`).then(d => setRows(d));
+  }, [wk]);
+
+  const getT = (uid, di) => rows.find(t => t.user_id===uid && t.day_index===di) || { inizio:"", fine:"", riposo:false };
+
+  const upd = async (uid, di, field, value) => {
+    if (!canEdit) return;
+    const ex  = rows.find(t => t.user_id===uid && t.day_index===di);
+    const nxt = { week_key:wk, user_id:uid, day_index:di, ...(ex||{}), id:ex?.id||`${wk}-${uid}-${di}`, [field]:value };
+    await dbUpsert("turni", nxt);
+    setRows(p => [...p.filter(t => !(t.user_id===uid && t.day_index===di)), nxt]);
+  };
+
+  return (
+    <div>
+      <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:20, flexWrap:"wrap" }}>
+        <button onClick={() => setOff(o=>o-1)} style={{ background:C.surface, border:`1px solid ${C.border}`, color:C.text, borderRadius:8, padding:"6px 14px", cursor:"pointer", boxShadow:C.shadow }}>‹</button>
+        <span style={{ color:C.text, fontWeight:700, fontSize:15 }}>
+          📅 {off===0 ? "Settimana corrente" : off===1 ? "Prossima settimana" : `Sett. del ${wk}`}
+        </span>
+        <button onClick={() => setOff(o=>o+1)} style={{ background:C.surface, border:`1px solid ${C.border}`, color:C.text, borderRadius:8, padding:"6px 14px", cursor:"pointer", boxShadow:C.shadow }}>›</button>
+        {off!==1 && <button onClick={() => setOff(1)} style={{ background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:12, fontFamily:"inherit", textDecoration:"underline" }}>Prossima ↩</button>}
+      </div>
+      {canEdit && (
+        <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:8, padding:"10px 14px", marginBottom:16, color:"#92400e", fontSize:13 }}>
+          💡 Clicca su una cella e digita orario inizio e fine. Usa <strong>⏸ riposo</strong> per giorni liberi.
+        </div>
+      )}
+      <Card style={{ overflowX:"auto", padding:0 }}>
+        <table style={{ width:"100%", borderCollapse:"collapse", minWidth:600 }}>
+          <thead>
+            <tr style={{ borderBottom:`2px solid ${C.border}`, background:"#f8fafc" }}>
+              <th style={{ width:140, textAlign:"left", color:C.sec, fontSize:11, fontWeight:700, padding:"10px 14px", textTransform:"uppercase", letterSpacing:"0.08em" }}>Persona</th>
+              {dates.map((d,i) => (
+                <th key={i} style={{ color:C.sec, padding:"10px 8px", fontSize:11, textAlign:"center", fontWeight:700 }}>
+                  <div style={{ textTransform:"uppercase", letterSpacing:"0.06em" }}>{GIORNI[i]}</div>
+                  <div style={{ color:C.text, fontSize:13, fontWeight:600, marginTop:2 }}>{d.getDate()}/{d.getMonth()+1}</div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {USERS.map(u => {
+              return (
+                <tr key={u.id} style={{ borderTop:`1px solid ${C.border}` }}>
+                  <td style={{ padding:"10px 14px" }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                      <div style={{ width:28, height:28, borderRadius:"50%", background:u.bg, display:"flex", alignItems:"center", justifyContent:"center", color:u.color, fontWeight:800, fontSize:12, flexShrink:0 }}>
+                        {u.name[0]}
+                      </div>
+                      <span style={{ color:C.text, fontSize:13, fontWeight:600 }}>{u.name}</span>
+                    </div>
+                  </td>
+                  {dates.map((_, di) => {
+                    const t = getT(u.id, di);
+                    return (
+                      <td key={di} style={{ padding:6, verticalAlign:"top" }}>
+                        <div style={{ background:t.riposo?"#f1f5f9":C.bg, border:`1px solid ${C.border}`, borderRadius:8, padding:"6px", minHeight:58 }}>
+                          {!t.riposo ? (
+                            <div>
+                              <div style={{ display:"flex", alignItems:"center", gap:4, marginBottom:4 }}>
+                                <span style={{ color:C.muted, fontSize:9, fontWeight:700, width:26, flexShrink:0 }}>INIZIO</span>
+                                <input type="time" value={String(t.inizio||"")} disabled={!canEdit} onChange={e=>upd(u.id,di,"inizio",e.target.value)}
+                                  style={{ background:"#fff", border:`1px solid ${C.border}`, borderRadius:6, color:u.color, fontSize:11, outline:"none", width:"100%", padding:"3px 6px", cursor:canEdit?"pointer":"default", fontFamily:"inherit", fontWeight:600 }} />
+                              </div>
+                              <div style={{ display:"flex", alignItems:"center", gap:4 }}>
+                                <span style={{ color:C.muted, fontSize:9, fontWeight:700, width:26, flexShrink:0 }}>FINE</span>
+                                <input type="time" value={String(t.fine||"")} disabled={!canEdit} onChange={e=>upd(u.id,di,"fine",e.target.value)}
+                                  style={{ background:"#fff", border:`1px solid ${C.border}`, borderRadius:6, color:C.sec, fontSize:11, outline:"none", width:"100%", padding:"3px 6px", cursor:canEdit?"pointer":"default", fontFamily:"inherit" }} />
+                              </div>
+                            </div>
+                          ) : (
+                            <div style={{ textAlign:"center", paddingTop:10, color:C.muted, fontSize:12 }}>🌙 riposo</div>
+                          )}
+                          {canEdit && (
+                            <button onClick={() => upd(u.id,di,"riposo",!t.riposo)}
+                              style={{ background:"none", border:"none", cursor:"pointer", color:t.riposo?u.color:C.muted, fontSize:10, marginTop:4, width:"100%", textAlign:"center", fontFamily:"inherit" }}>
+                              {t.riposo ? "▶ lavoro" : "⏸ riposo"}
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </Card>
+    </div>
+  );
+}
+
+// ─── PAGE: CONTRATTI ──────────────────────────────────────────────────────────
+function PageContratti({ cur }) {
+  const canCreate = ADMINS.includes(cur.id);
+  const canSeePrivate = ADMINS.includes(cur.id);
+  const color     = cur.color;
+  const [contracts, setContracts] = useState([]);
+  const [selId,  setSelId]  = useState(null);
+  const [showNew,setShowNew]= useState(false);
+  const [editInfo, setEditInfo] = useState(false);
+  const [nf, setNf] = useState({
+    nome:"", data:toDay(), note:"",
+    telefoni:[""], email:"", tipo_locale:"", commissione:"",
+    referente:"", giorno_chiusura:"", orario_apertura:"", orario_chiusura:"",
+    pec:"", aggiunta_menu:""
+  });
+  const [load, setLoad] = useState(true);
+
+  const load_ = async () => { setLoad(true); const d=await dbGet("contracts","?order=created_at.desc"); setContracts(d); setLoad(false); };
+  useEffect(() => { load_(); }, []);
+
+  const create = async () => {
+    if (!nf.nome.trim()) return;
+    const tasks = {};
+    ALL_CT.forEach(t => { tasks[t.id] = false; });
+    const tels = nf.telefoni.filter(t => t.trim());
+    await dbUpsert("contracts", { id:Date.now(), nome:nf.nome.trim(), data:nf.data, note:nf.note, tasks,
+      telefoni:tels, email:nf.email, tipo_locale:nf.tipo_locale, commissione:nf.commissione,
+      referente:nf.referente, giorno_chiusura:nf.giorno_chiusura, orario_apertura:nf.orario_apertura,
+      orario_chiusura:nf.orario_chiusura, pec:nf.pec, aggiunta_menu:nf.aggiunta_menu });
+    setNf({ nome:"", data:toDay(), note:"", telefoni:[""], email:"", tipo_locale:"", commissione:"",
+      referente:"", giorno_chiusura:"", orario_apertura:"", orario_chiusura:"", pec:"", aggiunta_menu:"" });
+    setShowNew(false);
+    load_();
+  };
+
+  const saveInfo = async () => {
+    const c = contracts.find(x => x.id===selId);
+    if (!c) return;
+    const tels = nf.telefoni.filter(t => t.trim());
+    await dbUpsert("contracts", { ...c, telefoni:tels, email:nf.email, tipo_locale:nf.tipo_locale,
+      commissione:nf.commissione, referente:nf.referente, giorno_chiusura:nf.giorno_chiusura,
+      orario_apertura:nf.orario_apertura, orario_chiusura:nf.orario_chiusura,
+      pec:nf.pec, aggiunta_menu:nf.aggiunta_menu, note:nf.note });
+    setEditInfo(false);
+    load_();
+  };
+
+  const toggleTask = async (cid, tid) => {
+    const c = contracts.find(x => x.id===cid);
+    if (!c) return;
+    const tasks_old = c.tasks && typeof c.tasks === "object" ? c.tasks : {};
+    const tasks = { ...tasks_old, [tid]: !tasks_old[tid] };
+    await dbUpsert("contracts", { ...c, tasks });
+    setContracts(p => p.map(x => x.id===cid ? { ...x, tasks } : x));
+  };
+
+  const prog = c => {
+    const t = c.tasks && typeof c.tasks === "object" ? c.tasks : {};
+    const done = ALL_CT.filter(x => t[x.id]).length;
+    return { done, total:ALL_CT.length, pct: Math.round(done/ALL_CT.length*100) };
+  };
+
+  const sel = contracts.find(c => c.id === selId);
+
+  // Quando si seleziona un contratto, popola il form di modifica
+  useEffect(() => {
+    if (sel) {
+      const tels = Array.isArray(sel.telefoni) && sel.telefoni.length > 0 ? sel.telefoni : [""];
+      setNf(p => ({ ...p,
+        telefoni: tels, email: sel.email||"", tipo_locale: sel.tipo_locale||"",
+        commissione: sel.commissione||"", referente: sel.referente||"",
+        giorno_chiusura: sel.giorno_chiusura||"", orario_apertura: sel.orario_apertura||"",
+        orario_chiusura: sel.orario_chiusura||"", pec: sel.pec||"",
+        aggiunta_menu: sel.aggiunta_menu||"", note: sel.note||""
+      }));
+    }
+  }, [selId]);
+
+  const SECS = [
+    { key:"app",  label:"📱 App Manager",  tasks:CT_APP, color:"#2563eb" },
+    { key:"soc",  label:"📣 Social Media", tasks:CT_SOC, color:"#7c3aed" },
+    { key:"cont", label:"📊 Contabilità",  tasks:CT_CON, color:"#059669" },
+  ];
+  const canSec = sec => ADMINS.includes(cur.id) || (sec==="app"&&cur.id==="app") || (sec==="soc"&&cur.id==="social") || (sec==="cont"&&cur.id==="contabilita");
+
+  // Form campi (riusato per nuovo e modifica)
+  const formJSX = (
+    <div style={{ display:"grid", gap:12 }}>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+        <Inp label="Referente" value={nf.referente} onChange={e=>setNf(p=>({...p,referente:e.target.value}))} placeholder="Nome contatto" />
+        <Inp label="Tipo locale" value={nf.tipo_locale} onChange={e=>setNf(p=>({...p,tipo_locale:e.target.value}))} placeholder="Es. Ristorante, Pizzeria..." />
+        <Inp label="Email" value={nf.email} onChange={e=>setNf(p=>({...p,email:e.target.value}))} placeholder="email@esempio.it" />
+        <Inp label="Giorno di chiusura" value={nf.giorno_chiusura} onChange={e=>setNf(p=>({...p,giorno_chiusura:e.target.value}))} placeholder="Es. Lunedì" />
+        <Inp label="Orario apertura" value={nf.orario_apertura} onChange={e=>setNf(p=>({...p,orario_apertura:e.target.value}))} placeholder="Es. 12:00" />
+        <Inp label="Orario chiusura" value={nf.orario_chiusura} onChange={e=>setNf(p=>({...p,orario_chiusura:e.target.value}))} placeholder="Es. 22:00" />
+        <Inp label="Aggiunta menu €" value={nf.aggiunta_menu} onChange={e=>setNf(p=>({...p,aggiunta_menu:e.target.value}))} placeholder="Es. +1.50" />
+        {canSeePrivate && <Inp label="Commissione %" value={nf.commissione} onChange={e=>setNf(p=>({...p,commissione:e.target.value}))} placeholder="Es. 15%" />}
+        {canSeePrivate && <Inp label="PEC" value={nf.pec} onChange={e=>setNf(p=>({...p,pec:e.target.value}))} placeholder="pec@esempio.it" />}
+      </div>
+      <div>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+          <label style={{ color:C.sec, fontSize:11, fontWeight:600 }}>Numeri di telefono</label>
+          <button onClick={() => setNf(p=>({...p,telefoni:[...p.telefoni,""]}))}
+            style={{ background:"none", border:"none", color, fontSize:12, cursor:"pointer", fontFamily:"inherit", fontWeight:600 }}>+ aggiungi</button>
+        </div>
+        {nf.telefoni.map((tel,i) => (
+          <div key={i} style={{ display:"flex", gap:6, marginBottom:6 }}>
+            <input value={tel} onChange={e => { const t=[...nf.telefoni]; t[i]=e.target.value; setNf(p=>({...p,telefoni:t})); }}
+              placeholder="Es. 0932 000000" style={{ flex:1, background:C.input, border:`1px solid ${C.border}`, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none" }} />
+            {nf.telefoni.length > 1 && (
+              <button onClick={() => setNf(p=>({...p,telefoni:p.telefoni.filter((_,j)=>j!==i)}))}
+                style={{ background:"none", border:"none", color:"#dc2626", cursor:"pointer", fontSize:18, padding:"0 6px" }}>×</button>
+            )}
+          </div>
+        ))}
+      </div>
+      <div>
+        <label style={{ color:C.sec, fontSize:11, fontWeight:600, display:"block", marginBottom:4 }}>Note</label>
+        <textarea value={nf.note} onChange={e=>setNf(p=>({...p,note:e.target.value}))} placeholder="Note aggiuntive..." rows={2}
+          style={{ background:C.input, border:`1px solid ${C.border}`, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none", width:"100%", boxSizing:"border-box", resize:"vertical" }} />
+      </div>
+    </div>
+  );
+
+  let viewJSX = null;
+  if (sel) {
+    const tels = Array.isArray(sel.telefoni) ? sel.telefoni.filter(Boolean) : [];
+    const selRows = [
+      { l:"Referente",       v:sel.referente },
+      { l:"Tipo locale",     v:sel.tipo_locale },
+      { l:"Email",           v:sel.email },
+      { l:"Telefoni",        v:tels.join(" / ") },
+      { l:"Giorno chiusura", v:sel.giorno_chiusura },
+      { l:"Orari",           v:sel.orario_apertura && sel.orario_chiusura ? sel.orario_apertura+" – "+sel.orario_chiusura : sel.orario_apertura||sel.orario_chiusura },
+      { l:"Aggiunta menu",   v:sel.aggiunta_menu },
+    ].concat(canSeePrivate ? [{ l:"Commissione", v:sel.commissione }, { l:"PEC", v:sel.pec }] : [])
+     .filter(r => r.v);
+    if (selRows.length > 0 || sel.note) {
+      viewJSX = (
+        <div style={{ background:C.bg, borderRadius:10, padding:12, marginBottom:16 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
+            {selRows.map(r => (
+              <div key={r.l}>
+                <div style={{ color:C.muted, fontSize:10, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.06em" }}>{r.l}</div>
+                <div style={{ color:C.text, fontSize:13, fontWeight:500, marginTop:1 }}>{String(r.v)}</div>
+              </div>
+            ))}
+          </div>
+          {sel.note && <div style={{ marginTop:10, color:C.sec, fontSize:13, borderTop:"1px solid "+C.border, paddingTop:8 }}>{String(sel.note)}</div>}
+        </div>
+      );
+    }
+  }
+
+  return (
+    <div style={{ display:"grid", gridTemplateColumns: sel ? "280px 1fr" : "1fr", gap:16, alignItems:"start" }}>
+      <div>
+        {canCreate && (
+          <div style={{ marginBottom:12 }}>
+            {!showNew ? (
+              <Btn onClick={() => setShowNew(true)} color={color} full>+ Nuova attività in app</Btn>
+            ) : (
+              <Card>
+                <STitle>Nuova attività</STitle>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
+                  <Inp label="Nome azienda" value={nf.nome} onChange={e=>setNf(p=>({...p,nome:e.target.value}))} placeholder="Es. Ristorante Rossi" />
+                  <Inp label="Data ingresso" type="date" value={nf.data} onChange={e=>setNf(p=>({...p,data:e.target.value}))} />
+                </div>
+                {formJSX}
+                <div style={{ display:"flex", gap:8, marginTop:14 }}><Btn onClick={create} color={color}>Crea</Btn><Btn onClick={() => setShowNew(false)} ghost>Annulla</Btn></div>
+              </Card>
+            )}
+          </div>
+        )}
+        {load ? <Spin /> : contracts.length===0 ? <p style={{ color:C.muted, fontSize:13 }}>Nessun contratto attivo.</p> : (
+          contracts.map(c => {
+            const { done, total, pct } = prog(c);
+            return (
+              <div key={c.id} onClick={() => setSelId(c.id===selId ? null : c.id)}
+                style={{ background: selId===c.id ? `${color}08` : "#fff", border:`1px solid ${selId===c.id ? color : C.border}`, borderRadius:12, padding:14, cursor:"pointer", marginBottom:8, boxShadow:C.shadow }}>
+                <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
+                  <span style={{ color:C.text, fontWeight:700, fontSize:14 }}>{String(c.nome||"")}</span>
+                  <span style={{ color:C.muted, fontSize:11 }}>{String(c.data||"")}</span>
+                </div>
+                {c.tipo_locale && <div style={{ color:C.muted, fontSize:12, marginBottom:6 }}>{String(c.tipo_locale)}</div>}
+                <Progress pct={pct} color={pct===100 ? "#059669" : color} />
+                <div style={{ color:C.muted, fontSize:11, marginTop:6 }}>{done}/{total} completati {pct===100 && "✅"}</div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {sel && (
+        <Card>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16 }}>
+            <div>
+              <h2 style={{ color:C.text, margin:"0 0 2px", fontSize:18, fontWeight:800, fontFamily:"'Syne',sans-serif" }}>{String(sel.nome||"")}</h2>
+              <span style={{ color:C.muted, fontSize:12 }}>Ingresso: {String(sel.data||"")}</span>
+            </div>
+            <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+              {canCreate && <button onClick={() => setEditInfo(!editInfo)} style={{ background:"none", border:`1px solid ${C.border}`, borderRadius:8, color:C.sec, cursor:"pointer", fontSize:12, padding:"5px 10px", fontFamily:"inherit" }}>{editInfo ? "✕ Chiudi" : "✏️ Modifica info"}</button>}
+              <button onClick={() => { setSelId(null); setEditInfo(false); }} style={{ background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:22 }}>×</button>
+            </div>
+          </div>
+
+          {/* Form modifica info */}
+          {editInfo && canCreate && (
+            <div style={{ background:C.bg, borderRadius:10, padding:14, marginBottom:16 }}>
+              {formJSX}
+              <div style={{ display:"flex", gap:8, marginTop:12 }}>
+                <Btn onClick={saveInfo} color={color}>Salva</Btn>
+                <Btn onClick={() => setEditInfo(false)} ghost>Annulla</Btn>
+              </div>
+            </div>
+          )}
+
+          {!editInfo && viewJSX}
+
+          {/* Checklist per sezione */}
+          {SECS.map(sec => {
+            const canT   = canSec(sec.key);
+            const tasks_ = sel.tasks && typeof sel.tasks === "object" ? sel.tasks : {};
+            const done   = sec.tasks.filter(t => tasks_[t.id]).length;
+            return (
+              <div key={sec.key} style={{ marginBottom:20 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
+                  <STitle color={sec.color}>{sec.label}</STitle>
+                  <Bdg txt={`${done}/${sec.tasks.length}`} color={sec.color} />
+                </div>
+                {sec.tasks.map(task => (
+                  <div key={task.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 0", borderBottom:`1px solid ${C.border}` }}>
+                    <Chk on={!!tasks_[task.id]} onChange={() => canT && toggleTask(sel.id, task.id)} color={sec.color} off={!canT} />
+                    <span style={{ color:tasks_[task.id]?C.muted:C.text, textDecoration:tasks_[task.id]?"line-through":"none", fontSize:13 }}>{task.t}</span>
+                  </div>
+                ))}
+                {!canT && <p style={{ color:C.muted, fontSize:11, margin:"6px 0 0" }}>Solo {sec.label} può spuntare queste voci.</p>}
+              </div>
+            );
+          })}
+        </Card>
+      )}
+    </div>
+  );
+}
+
+  const load_ = async () => { setLoad(true); const d=await dbGet("contracts","?order=created_at.desc"); setContracts(d); setLoad(false); };
+  useEffect(() => { load_(); }, []);
+
+  const create = async () => {
+    if (!nf.nome.trim()) return;
+    const tasks = {};
+    ALL_CT.forEach(t => { tasks[t.id] = false; });
+    await dbUpsert("contracts", { id:Date.now(), nome:nf.nome.trim(), data:nf.data, note:nf.note, tasks });
+    setNf({ nome:"", data:toDay(), note:"" });
+    setShowNew(false);
+    load_();
+  };
+
+  const toggleTask = async (cid, tid) => {
+    const c = contracts.find(x => x.id===cid);
+    if (!c) return;
+    const tasks_old = c.tasks && typeof c.tasks === "object" ? c.tasks : {};
+    const tasks = { ...tasks_old, [tid]: !tasks_old[tid] };
+    await dbUpsert("contracts", { ...c, tasks });
+    setContracts(p => p.map(x => x.id===cid ? { ...x, tasks } : x));
+  };
+
+  const prog = c => {
+    const t = c.tasks && typeof c.tasks === "object" ? c.tasks : {};
+    const done = ALL_CT.filter(x => t[x.id]).length;
+    return { done, total:ALL_CT.length, pct: Math.round(done/ALL_CT.length*100) };
+  };
+
+  const sel = contracts.find(c => c.id === selId);
+
+  const SECS = [
+    { key:"app",  label:"📱 App Manager",  tasks:CT_APP, color:"#2563eb" },
+    { key:"soc",  label:"📣 Social Media", tasks:CT_SOC, color:"#7c3aed" },
+    { key:"cont", label:"📊 Contabilità",  tasks:CT_CON, color:"#059669" },
+  ];
+  const canSec = sec => ADMINS.includes(cur.id) || (sec==="app"&&cur.id==="app") || (sec==="soc"&&cur.id==="social") || (sec==="cont"&&cur.id==="contabilita");
+
+  return (
+    <div style={{ display:"grid", gridTemplateColumns: sel ? "280px 1fr" : "1fr", gap:16, alignItems:"start" }}>
+      <div>
+        {canCreate && (
+          <div style={{ marginBottom:12 }}>
+            {!showNew ? (
+              <Btn onClick={() => setShowNew(true)} color={color} full>+ Nuova attività in app</Btn>
+            ) : (
+              <Card>
+                <STitle>Nuova attività</STitle>
+                <div style={{ marginBottom:10 }}><Inp label="Nome azienda" value={nf.nome} onChange={e=>setNf(p=>({...p,nome:e.target.value}))} placeholder="Es. Ristorante Rossi" /></div>
+                <div style={{ marginBottom:10 }}><Inp label="Data ingresso" type="date" value={nf.data} onChange={e=>setNf(p=>({...p,data:e.target.value}))} /></div>
+                <div style={{ marginBottom:14 }}><Inp label="Note" value={nf.note} onChange={e=>setNf(p=>({...p,note:e.target.value}))} placeholder="Es. contatto, tipologia locale..." /></div>
+                <div style={{ display:"flex", gap:8 }}><Btn onClick={create} color={color}>Crea</Btn><Btn onClick={() => setShowNew(false)} ghost>Annulla</Btn></div>
+              </Card>
+            )}
+          </div>
+        )}
+        {load ? <Spin /> : contracts.length===0 ? <p style={{ color:C.muted, fontSize:13 }}>Nessun contratto attivo.</p> : (
+          contracts.map(c => {
+            const { done, total, pct } = prog(c);
+            return (
+              <div key={c.id} onClick={() => setSelId(c.id===selId ? null : c.id)}
+                style={{ background: selId===c.id ? `${color}08` : "#fff", border:`1px solid ${selId===c.id ? color : C.border}`, borderRadius:12, padding:14, cursor:"pointer", marginBottom:8, boxShadow:C.shadow, transition:"all .15s" }}>
+                <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8 }}>
+                  <span style={{ color:C.text, fontWeight:700, fontSize:14 }}>{String(c.nome||"")}</span>
+                  <span style={{ color:C.muted, fontSize:11 }}>{String(c.data||"")}</span>
+                </div>
+                <Progress pct={pct} color={pct===100 ? "#059669" : color} />
+                <div style={{ color:C.muted, fontSize:11, marginTop:6 }}>{done}/{total} completati {pct===100 && "✅"}</div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {sel && (
+        <Card>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:20 }}>
+            <div>
+              <h2 style={{ color:C.text, margin:"0 0 4px", fontSize:18, fontWeight:800, fontFamily:"'Syne',sans-serif" }}>{String(sel.nome||"")}</h2>
+              <span style={{ color:C.sec, fontSize:13 }}>Ingresso: {String(sel.data||"")}</span>
+              {sel.note && <div style={{ color:C.sec, fontSize:13, marginTop:8, background:"#fff7ed", borderRadius:8, padding:"8px 12px", borderLeft:`3px solid ${color}` }}>{String(sel.note)}</div>}
+            </div>
+            <button onClick={() => setSelId(null)} style={{ background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:22 }}>×</button>
+          </div>
+          {SECS.map(sec => {
+            const canT   = canSec(sec.key);
+            const tasks_ = sel.tasks && typeof sel.tasks === "object" ? sel.tasks : {};
+            const done   = sec.tasks.filter(t => tasks_[t.id]).length;
+            return (
+              <div key={sec.key} style={{ marginBottom:20 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
+                  <STitle color={sec.color}>{sec.label}</STitle>
+                  <Bdg txt={`${done}/${sec.tasks.length}`} color={sec.color} />
+                </div>
+                {sec.tasks.map(task => (
+                  <div key={task.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 0", borderBottom:`1px solid ${C.border}` }}>
+                    <Chk on={!!tasks_[task.id]} onChange={() => canT && toggleTask(sel.id, task.id)} color={sec.color} off={!canT} />
+                    <span style={{ color:tasks_[task.id]?C.muted:C.text, textDecoration:tasks_[task.id]?"line-through":"none", fontSize:13 }}>{task.t}</span>
+                  </div>
+                ))}
+                {!canT && <p style={{ color:C.muted, fontSize:11, margin:"6px 0 0" }}>Solo {sec.label} può spuntare queste voci.</p>}
+              </div>
+            );
+          })}
+        </Card>
+      )}
+    </div>
+  );
+}
+
+// ─── PAGE: TASK ───────────────────────────────────────────────────────────────
+function TaskItem({ t, cur, color, isOpen, onToggleOpen, onToggleDone, onDelete, canCreate }) {
+  const myDone   = !!(t.done && t.done[cur.id]);
+  const assigned = Array.isArray(t.assegnati) ? t.assegnati : [];
+  const assUsers = assigned.map(uid => getUser(uid)).filter(Boolean);
+  const creator  = getUser(t.created_by);
+  const isAssigned = assigned.includes(cur.id);
+
+  return (
+    <div style={{ background:C.surface, border:`1px solid ${isOpen ? color : C.border}`, borderRadius:10, marginBottom:8, overflow:"hidden", boxShadow:C.shadow }}>
+      <div onClick={onToggleOpen} style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 14px", cursor:"pointer" }}>
+        {isAssigned && (
+          <div onClick={e => { e.stopPropagation(); onToggleDone(); }}
+            style={{ width:18, height:18, borderRadius:4, flexShrink:0, border:`2px solid ${myDone?"#059669":"#cbd5e1"}`, background:myDone?"#059669":"#fff", display:"flex", alignItems:"center", justifyContent:"center", transition:"all .15s" }}>
+            {myDone && <span style={{ color:"#fff", fontSize:10, fontWeight:700 }}>✓</span>}
+          </div>
+        )}
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ color:(myDone&&isAssigned)?C.muted:C.text, fontWeight:600, fontSize:14, textDecoration:(myDone&&isAssigned)?"line-through":"none" }}>
+            {String(t.titolo||"")}
+          </div>
+          <div style={{ display:"flex", gap:6, marginTop:4, flexWrap:"wrap", alignItems:"center" }}>
+            <span style={{ color:C.muted, fontSize:11 }}>{String(t.created_at||"")}</span>
+            {creator && <span style={{ color:creator.color, fontSize:11, fontWeight:600 }}>da {creator.name}</span>}
+            {assUsers.map(u => (
+              <span key={u.id} style={{ background:u.bg, color:u.color, padding:"1px 7px", borderRadius:10, fontSize:10, fontWeight:600 }}>
+                {u.name}{t.done && t.done[u.id] ? " ✓" : ""}
+              </span>
+            ))}
+          </div>
+        </div>
+        <span style={{ color:C.muted, fontSize:14, transition:"transform .2s", transform:isOpen?"rotate(90deg)":"rotate(0deg)" }}>›</span>
+        {canCreate && (
+          <button onClick={e => { e.stopPropagation(); onDelete(); }} style={{ background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:16, padding:"0 4px", lineHeight:1 }}>×</button>
+        )}
+      </div>
+      {isOpen && (
+        <div style={{ padding:"0 14px 14px", borderTop:`1px solid ${C.border}` }}>
+          {t.dettagli ? (
+            <div style={{ color:C.sec, fontSize:13, lineHeight:1.7, marginTop:10, background:C.bg, borderRadius:8, padding:"10px 14px", borderLeft:`3px solid ${color}`, whiteSpace:"pre-wrap", marginBottom:12 }}>
+              {String(t.dettagli)}
+            </div>
+          ) : (
+            <p style={{ color:C.muted, fontSize:12, fontStyle:"italic", margin:"10px 0 12px" }}>Nessun dettaglio aggiunto.</p>
+          )}
+          {isAssigned && (
+            <button onClick={onToggleDone}
+              style={{ display:"flex", alignItems:"center", gap:8, padding:"9px 18px", borderRadius:8, border:"none", cursor:"pointer", fontFamily:"inherit", fontWeight:700, fontSize:13, background:myDone?"#f1f5f9":"#059669", color:myDone?C.sec:"#fff" }}>
+              {myDone ? "↩ Segna come da fare" : "✓ Segna come completato"}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PageTask({ cur }) {
+  const canCreate = ADMINS.includes(cur.id);
+  const color     = cur.color;
+  const [tasks,   setTasks]   = useState([]);
+  const [showForm,setShowForm]= useState(false);
+  const [openId,  setOpenId]  = useState(null);
+  const [filtro,  setFiltro]  = useState("miei");
+  const [load,    setLoad]    = useState(true);
+  const [form,    setForm]    = useState({ titolo:"", dettagli:"", assegnati:[] });
+
+  const load_ = async () => { setLoad(true); const d=await dbGet("tasks","?order=created_at.desc"); setTasks(d); setLoad(false); };
+  useEffect(() => { load_(); }, []);
+
+  const toggleAss = uid => setForm(p => ({
+    ...p,
+    assegnati: p.assegnati.includes(uid) ? p.assegnati.filter(x=>x!==uid) : [...p.assegnati, uid],
+  }));
+
+  const crea = async () => {
+    if (!form.titolo.trim() || form.assegnati.length===0) return;
+    await dbUpsert("tasks", { id:Date.now(), titolo:form.titolo.trim(), dettagli:form.dettagli.trim(), assegnati:form.assegnati, created_by:cur.id, created_at:toDay(), done:{} });
+    setForm({ titolo:"", dettagli:"", assegnati:[] });
+    setShowForm(false);
+    load_();
+  };
+
+  const toggleDone = async t => {
+    const done_old = t.done && typeof t.done === "object" ? t.done : {};
+    const done = { ...done_old, [cur.id]: !done_old[cur.id] };
+    await dbUpsert("tasks", { ...t, done });
+    setTasks(p => p.map(x => x.id===t.id ? { ...x, done } : x));
+  };
+
+  const del_ = async id => { await dbDelete("tasks", `id=eq.${id}`); setTasks(p=>p.filter(t=>t.id!==id)); if(openId===id)setOpenId(null); };
+
+  const isDone = t => {
+    const ass = Array.isArray(t.assegnati) ? t.assegnati : [];
+    const dn  = t.done && typeof t.done === "object" ? t.done : {};
+    if (canCreate && filtro==="tutti") return ass.every(u => dn[u]);
+    return !!dn[cur.id];
+  };
+
+  const vis      = canCreate && filtro==="tutti" ? tasks : tasks.filter(t => (Array.isArray(t.assegnati)?t.assegnati:[]).includes(cur.id));
+  const pending  = vis.filter(t => !isDone(t));
+  const completed= vis.filter(t => isDone(t));
+
+  return (
+    <div>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20, flexWrap:"wrap", gap:10 }}>
+        {canCreate && (
+          <div style={{ display:"flex", gap:6 }}>
+            {[{id:"miei",l:"I miei"},{id:"tutti",l:"Tutti"}].map(f => (
+              <button key={f.id} onClick={() => setFiltro(f.id)}
+                style={{ padding:"6px 14px", borderRadius:20, fontFamily:"inherit", fontWeight:600, fontSize:13, cursor:"pointer",
+                  border:`1px solid ${filtro===f.id ? color : C.border}`,
+                  background: filtro===f.id ? `${color}14` : "#fff",
+                  color: filtro===f.id ? color : C.sec }}>
+                {f.l}
+              </button>
+            ))}
+          </div>
+        )}
+        {canCreate && <Btn onClick={() => setShowForm(!showForm)} color={color}>{showForm ? "✕ Annulla" : "+ Nuovo task"}</Btn>}
+      </div>
+
+      {canCreate && showForm && (
+        <Card style={{ marginBottom:20 }}>
+          <STitle>Nuovo task</STitle>
+          <div style={{ display:"grid", gap:12, marginBottom:14 }}>
+            <Inp label="Titolo" value={form.titolo} onChange={e=>setForm(p=>({...p,titolo:e.target.value}))} placeholder="Es. Aggiornare listino prezzi" />
+            <div>
+              <label style={{ color:C.sec, fontSize:11, fontWeight:600, display:"block", marginBottom:4 }}>Dettagli (visibili al clic)</label>
+              <textarea value={form.dettagli} onChange={e=>setForm(p=>({...p,dettagli:e.target.value}))} placeholder="Descrivi cosa deve fare..." rows={3}
+                style={{ background:C.input, border:`1px solid ${C.border}`, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, outline:"none", width:"100%", boxSizing:"border-box", resize:"vertical", lineHeight:1.6, fontFamily:"inherit" }} />
+            </div>
+            <div>
+              <label style={{ color:C.sec, fontSize:11, fontWeight:600, display:"block", marginBottom:8 }}>Assegna a</label>
+              <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                {USERS.map(u => {
+                  const sel_ = form.assegnati.includes(u.id);
+                  return (
+                    <button key={u.id} onClick={() => toggleAss(u.id)}
+                      style={{ display:"flex", alignItems:"center", gap:7, padding:"8px 14px", borderRadius:8, cursor:"pointer", fontFamily:"inherit", transition:"all .15s",
+                        border:`2px solid ${sel_ ? u.color : C.border}`,
+                        background: sel_ ? u.bg : "#fff" }}>
+                      <div style={{ width:8, height:8, borderRadius:"50%", background:u.color }} />
+                      <span style={{ color: sel_ ? u.color : C.sec, fontWeight:600, fontSize:13 }}>{u.name}</span>
+                      {sel_ && <span style={{ color:u.color, fontSize:12 }}>✓</span>}
+                    </button>
+                  );
+                })}
+              </div>
+              {form.assegnati.length===0 && <p style={{ color:"#dc2626", fontSize:11, margin:"6px 0 0" }}>Seleziona almeno una persona.</p>}
+            </div>
+          </div>
+          <Btn onClick={crea} color={color}>Crea task</Btn>
+        </Card>
+      )}
+
+      {load ? <Spin /> : (
+        <div>
+          {pending.length===0 && completed.length===0 && (
+            <Card><p style={{ color:C.muted, fontSize:13, margin:0 }}>{canCreate ? "Nessun task creato." : "Nessun task assegnato a te."}</p></Card>
+          )}
+          {pending.length > 0 && (
+            <div style={{ marginBottom:20 }}>
+              <div style={{ color:C.sec, fontSize:12, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", marginBottom:10 }}>Da fare — {pending.length}</div>
+              {pending.map(t => (
+                <TaskItem key={t.id} t={t} cur={cur} color={color} isOpen={openId===t.id} onToggleOpen={() => setOpenId(openId===t.id?null:t.id)} onToggleDone={() => toggleDone(t)} onDelete={() => del_(t.id)} canCreate={canCreate} />
+              ))}
+            </div>
+          )}
+          {completed.length > 0 && (
+            <div>
+              <div style={{ color:C.muted, fontSize:12, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", marginBottom:10 }}>Completati — {completed.length}</div>
+              {completed.map(t => (
+                <TaskItem key={t.id} t={t} cur={cur} color={color} isOpen={openId===t.id} onToggleOpen={() => setOpenId(openId===t.id?null:t.id)} onToggleDone={() => toggleDone(t)} onDelete={() => del_(t.id)} canCreate={canCreate} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── APP ROOT ─────────────────────────────────────────────────────────────────
+const PAGE_LABELS = { home:"Dashboard", app:"Gestione App", social:"Social Media", cont:"Contabilità", turni:"Pianificazione Turni", contr:"Nuovi Contratti", task:"Task & Assegnazioni" };
+
+function Shell({ uid, setUid }) {
+  const [page, setPage] = useState("home");
+  const [mob,  setMob]  = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const cur = getUser(uid);
+
+  useEffect(() => {
+    const check = () => setMob(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // Auto-refresh ogni 2 minuti
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRefreshKey(k => k + 1);
+    }, 120000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const visNav = NAV.filter(n => n.roles.includes("all") || n.roles.includes(uid));
+
+  const PageContent = () => {
+    if (page==="home")  return <ErrBound name="Home"><PageHome cur={cur} key={refreshKey} /></ErrBound>;
+    if (page==="app")   return <ErrBound name="App"><PageApp cur={cur} key={refreshKey} /></ErrBound>;
+    if (page==="social")return <ErrBound name="Social"><PageSocial cur={cur} key={refreshKey} /></ErrBound>;
+    if (page==="cont")  return <ErrBound name="Contabilità"><PageCont cur={cur} key={refreshKey} /></ErrBound>;
+    if (page==="turni") return <ErrBound name="Turni"><PageTurni cur={cur} key={refreshKey} /></ErrBound>;
+    if (page==="contr") return <ErrBound name="Contratti"><PageContratti cur={cur} key={refreshKey} /></ErrBound>;
+    if (page==="task")  return <ErrBound name="Task"><PageTask cur={cur} key={refreshKey} /></ErrBound>;
+    return null;
+  };
+
+  if (mob) {
+    return (
+      <div style={{ minHeight:"100vh", background:C.bg, display:"flex", flexDirection:"column" }}>
+        <div style={{ background:C.surface, borderBottom:`1px solid ${C.border}`, padding:"0 16px", height:52, display:"flex", alignItems:"center", justifyContent:"space-between", position:"sticky", top:0, zIndex:50, flexShrink:0 }}>
+          <span style={{ fontFamily:"'Syne',sans-serif", fontSize:19, fontWeight:800, color:C.text, letterSpacing:"-0.03em" }}>Team<span style={{ color:"#6366f1" }}>Hub</span></span>
+          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+            <div style={{ width:32, height:32, borderRadius:"50%", background:cur.bg, display:"flex", alignItems:"center", justifyContent:"center", color:cur.color, fontWeight:800, fontSize:14 }}>{cur.name[0]}</div>
+            <button onClick={() => setUid(null)} style={{ background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:20, padding:4, lineHeight:1 }}>↩</button>
+          </div>
+        </div>
+        <div style={{ flex:1, overflow:"auto", padding:"16px 12px", paddingBottom:80 }}>
+          <PageContent />
+        </div>
+        <div style={{ position:"fixed", bottom:0, left:0, right:0, background:C.surface, borderTop:`1px solid ${C.border}`, display:"flex", zIndex:50, boxShadow:"0 -2px 10px rgba(0,0,0,0.06)" }}>
+          {visNav.map(n => (
+            <button key={n.id} onClick={() => setPage(n.id)}
+              style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"8px 4px 10px", border:"none", background:"transparent", cursor:"pointer", fontFamily:"inherit", gap:3,
+                borderTop:`2px solid ${page===n.id ? cur.color : "transparent"}`,
+                color: page===n.id ? cur.color : C.muted }}>
+              <span style={{ fontSize:18, lineHeight:1 }}>{n.icon}</span>
+              <span style={{ fontSize:9, fontWeight: page===n.id ? 700 : 500, letterSpacing:"0.02em" }}>{n.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ minHeight:"100vh", background:C.bg, display:"flex" }}>
+      <div style={{ width:220, background:C.surface, borderRight:`1px solid ${C.border}`, display:"flex", flexDirection:"column", position:"sticky", top:0, height:"100vh", flexShrink:0 }}>
+        <div style={{ padding:"20px 20px 16px", borderBottom:`1px solid ${C.border}` }}>
+          <span style={{ fontFamily:"'Syne',sans-serif", fontSize:22, fontWeight:800, color:C.text, letterSpacing:"-0.03em" }}>Team<span style={{ color:"#6366f1" }}>Hub</span></span>
+        </div>
+        <nav style={{ flex:1, padding:"12px 10px", display:"flex", flexDirection:"column", gap:2 }}>
+          {visNav.map(n => (
+            <button key={n.id} onClick={() => setPage(n.id)}
+              style={{ display:"flex", alignItems:"center", gap:10, width:"100%", padding:"9px 12px", border:"none", borderRadius:8, cursor:"pointer", textAlign:"left", fontFamily:"inherit", fontSize:14, fontWeight: page===n.id ? 700 : 500, transition:"all .1s",
+                background: page===n.id ? `${cur.color}14` : "transparent",
+                color: page===n.id ? cur.color : C.sec,
+                borderLeft: `3px solid ${page===n.id ? cur.color : "transparent"}` }}>
+              <span style={{ fontSize:16 }}>{n.icon}</span>
+              {n.label}
+            </button>
+          ))}
+        </nav>
+        <div style={{ padding:"14px 16px", borderTop:`1px solid ${C.border}` }}>
+          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+            <div style={{ width:34, height:34, borderRadius:"50%", background:cur.bg, display:"flex", alignItems:"center", justifyContent:"center", color:cur.color, fontWeight:800, fontSize:14, flexShrink:0 }}>{cur.name[0]}</div>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ color:C.text, fontSize:13, fontWeight:600, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{cur.name}</div>
+              <div style={{ color:C.muted, fontSize:11 }}>{cur.full}</div>
+            </div>
+            <button onClick={() => setUid(null)} title="Esci" style={{ background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:16, padding:2 }}>↩</button>
+          </div>
+        </div>
+      </div>
+      <div style={{ flex:1, overflow:"auto" }}>
+        <div style={{ background:C.surface, borderBottom:`1px solid ${C.border}`, padding:"0 28px", height:56, display:"flex", alignItems:"center", justifyContent:"space-between", position:"sticky", top:0, zIndex:40 }}>
+          <h1 style={{ color:C.text, margin:0, fontSize:17, fontWeight:700, fontFamily:"'Syne',sans-serif" }}>{PAGE_LABELS[page]}</h1>
+          <div style={{ color:C.muted, fontSize:12 }}>{new Date().toLocaleDateString("it-IT",{day:"numeric",month:"short",year:"numeric"})}</div>
+        </div>
+        <div style={{ padding:28, maxWidth:1100, margin:"0 auto" }}>
+          <PageContent />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const PINS = { contabilita: "2024", admin: "2024" };
+
+function App() {
+  const [uid,    setUid]    = useState(null);
+  const [pinFor, setPinFor] = useState(null); // id utente che richiede PIN
+  const [pin,    setPin]    = useState("");
+  const [pinErr, setPinErr] = useState(false);
+
+  useEffect(() => {
+    const lk = document.createElement("link");
+    lk.href = "https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap";
+    lk.rel  = "stylesheet";
+    document.head.appendChild(lk);
+    const st = document.createElement("style");
+    st.textContent = "@keyframes spin{to{transform:rotate(360deg)}} *{box-sizing:border-box}";
+    document.head.appendChild(st);
+    Object.assign(document.body.style, { margin:0, background:C.bg, fontFamily:"'DM Sans',sans-serif", color:C.text });
+  }, []);
+
+  const handleSelect = (uid) => {
+    if (PINS[uid]) {
+      setPinFor(uid);
+      setPin("");
+      setPinErr(false);
+    } else {
+      setUid(uid);
+    }
+  };
+
+  const handlePin = () => {
+    if (pin === PINS[pinFor]) {
+      setUid(pinFor);
+      setPinFor(null);
+      setPin("");
+      setPinErr(false);
+    } else {
+      setPinErr(true);
+      setPin("");
+    }
+  };
+
+  if (!uid) {
+    const u = pinFor ? getUser(pinFor) : null;
+    return (
+      <div style={{ minHeight:"100vh", background:"linear-gradient(135deg,#f0f4ff,#faf5ff,#f0fdf4)", display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
+        <div style={{ width:"100%", maxWidth:380 }}>
+          <div style={{ textAlign:"center", marginBottom:36 }}>
+            <h1 style={{ fontFamily:"'Syne',sans-serif", color:C.text, fontSize:34, fontWeight:800, margin:"0 0 8px", letterSpacing:"-0.03em" }}>
+              Team<span style={{ color:"#6366f1" }}>Hub</span>
+            </h1>
+            <p style={{ color:C.sec, fontSize:14, margin:0 }}>Seleziona il tuo profilo</p>
+          </div>
+
+          {/* Lista profili */}
+          <div style={{ display:"grid", gap:10 }}>
+            {USERS.map(u => (
+              <button key={u.id} onClick={() => handleSelect(u.id)}
+                style={{ display:"flex", alignItems:"center", gap:14, background: pinFor===u.id ? `${u.color}10` : "#fff", border:`1px solid ${pinFor===u.id ? u.color : C.border}`, borderRadius:14, padding:"14px 20px", cursor:"pointer", textAlign:"left", fontFamily:"inherit", boxShadow:C.shadow, width:"100%" }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor=u.color; e.currentTarget.style.boxShadow=`0 4px 14px ${u.color}25`; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor= pinFor===u.id ? u.color : C.border; e.currentTarget.style.boxShadow=C.shadow; }}>
+                <div style={{ width:44, height:44, borderRadius:"50%", background:u.bg, display:"flex", alignItems:"center", justifyContent:"center", color:u.color, fontWeight:800, fontSize:18, flexShrink:0 }}>
+                  {u.name[0]}
+                </div>
+                <div>
+                  <div style={{ color:C.text, fontWeight:700, fontSize:15 }}>{u.name}</div>
+                  <div style={{ color:C.sec, fontSize:12, marginTop:2 }}>{u.full}</div>
+                </div>
+                <div style={{ marginLeft:"auto", color: PINS[u.id] ? u.color : C.muted, fontSize:18 }}>
+                  {PINS[u.id] ? "🔒" : "›"}
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Box PIN */}
+          {pinFor && u && (
+            <div style={{ marginTop:20, background:"#fff", border:`2px solid ${u.color}`, borderRadius:14, padding:20, boxShadow:C.shadow }}>
+              <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:16 }}>
+                <div style={{ width:36, height:36, borderRadius:"50%", background:u.bg, display:"flex", alignItems:"center", justifyContent:"center", color:u.color, fontWeight:800, fontSize:16, flexShrink:0 }}>{u.name[0]}</div>
+                <div>
+                  <div style={{ color:C.text, fontWeight:700, fontSize:14 }}>{u.name}</div>
+                  <div style={{ color:C.sec, fontSize:12 }}>Inserisci il PIN per accedere</div>
+                </div>
+              </div>
+
+              {/* Puntini PIN */}
+              <div style={{ display:"flex", justifyContent:"center", gap:12, marginBottom:16 }}>
+                {[0,1,2,3].map(i => (
+                  <div key={i} style={{ width:14, height:14, borderRadius:"50%", background: pin.length > i ? u.color : "#e2e8f0", transition:"background .15s" }} />
+                ))}
+              </div>
+
+              {pinErr && <div style={{ color:"#dc2626", fontSize:13, textAlign:"center", marginBottom:12, fontWeight:600 }}>PIN non corretto. Riprova.</div>}
+
+              {/* Tastierino numerico */}
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:8 }}>
+                {["1","2","3","4","5","6","7","8","9","","0","⌫"].map((n,i) => (
+                  <button key={i} onClick={() => {
+                    if (n === "") return;
+                    if (n === "⌫") { setPin(p => p.slice(0,-1)); setPinErr(false); }
+                    else if (pin.length < 4) {
+                      const np = pin + n;
+                      setPin(np);
+                      if (np.length === 4) {
+                        setTimeout(() => {
+                          if (np === PINS[pinFor]) { setUid(pinFor); setPinFor(null); setPin(""); setPinErr(false); }
+                          else { setPinErr(true); setPin(""); }
+                        }, 150);
+                      }
+                    }
+                  }}
+                    style={{ padding:"14px 0", borderRadius:10, border:`1px solid ${C.border}`, background: n==="" ? "transparent" : C.hover, color:C.text, fontWeight:700, fontSize:18, cursor: n==="" ? "default" : "pointer", fontFamily:"inherit", boxShadow: n!=="" ? C.shadow : "none" }}>
+                    {n}
+                  </button>
+                ))}
+              </div>
+
+              <button onClick={() => { setPinFor(null); setPin(""); setPinErr(false); }}
+                style={{ marginTop:14, width:"100%", background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:13, fontFamily:"inherit" }}>
+                ← Torna ai profili
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return <Shell uid={uid} setUid={setUid} />;
+}
+
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
 </html>
