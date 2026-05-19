@@ -1264,7 +1264,7 @@ function PageContratti({ cur }) {
   const canSec = sec => ADMINS.includes(cur.id) || (sec==="app"&&cur.id==="app") || (sec==="soc"&&cur.id==="social") || (sec==="cont"&&cur.id==="contabilita");
 
   // Form campi (riusato per nuovo e modifica)
-  const DettagliForm = () => (
+  const formJSX = (
     <div style={{ display:"grid", gap:12 }}>
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
         <Inp label="Referente" value={nf.referente} onChange={e=>setNf(p=>({...p,referente:e.target.value}))} placeholder="Nome contatto" />
@@ -1277,7 +1277,6 @@ function PageContratti({ cur }) {
         {canSeePrivate && <Inp label="Commissione %" value={nf.commissione} onChange={e=>setNf(p=>({...p,commissione:e.target.value}))} placeholder="Es. 15%" />}
         {canSeePrivate && <Inp label="PEC" value={nf.pec} onChange={e=>setNf(p=>({...p,pec:e.target.value}))} placeholder="pec@esempio.it" />}
       </div>
-      {/* Telefoni multipli */}
       <div>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
           <label style={{ color:C.sec, fontSize:11, fontWeight:600 }}>Numeri di telefono</label>
@@ -1303,22 +1302,19 @@ function PageContratti({ cur }) {
     </div>
   );
 
-  // Vista dettagli contratto (sola lettura)
-  const DettagliView = ({ c }) => {
-    const tels = Array.isArray(c.telefoni) ? c.telefoni.filter(Boolean) : [];
+  const viewJSX = sel ? (() => {
+    const tels = Array.isArray(sel.telefoni) ? sel.telefoni.filter(Boolean) : [];
     const rows = [
-      { l:"Referente",       v:c.referente,        show:true },
-      { l:"Tipo locale",     v:c.tipo_locale,      show:true },
-      { l:"Email",           v:c.email,            show:true },
-      { l:"Telefoni",        v:tels.join(" / "),   show:true },
-      { l:"Giorno chiusura", v:c.giorno_chiusura,  show:true },
-      { l:"Orari",           v:c.orario_apertura && c.orario_chiusura ? `${c.orario_apertura} – ${c.orario_chiusura}` : c.orario_apertura||c.orario_chiusura, show:true },
-      { l:"Aggiunta menu",   v:c.aggiunta_menu,    show:true },
-      { l:"Commissione",     v:c.commissione,      show:canSeePrivate },
-      { l:"PEC",             v:c.pec,              show:canSeePrivate },
-    ].filter(r => r.show && r.v);
-
-    if (rows.length === 0 && !c.note) return null;
+      { l:"Referente",       v:sel.referente },
+      { l:"Tipo locale",     v:sel.tipo_locale },
+      { l:"Email",           v:sel.email },
+      { l:"Telefoni",        v:tels.join(" / ") },
+      { l:"Giorno chiusura", v:sel.giorno_chiusura },
+      { l:"Orari",           v:sel.orario_apertura && sel.orario_chiusura ? `${sel.orario_apertura} – ${sel.orario_chiusura}` : sel.orario_apertura||sel.orario_chiusura },
+      { l:"Aggiunta menu",   v:sel.aggiunta_menu },
+      ...(canSeePrivate ? [{ l:"Commissione", v:sel.commissione }, { l:"PEC", v:sel.pec }] : []),
+    ].filter(r => r.v);
+    if (rows.length === 0 && !sel.note) return null;
     return (
       <div style={{ background:C.bg, borderRadius:10, padding:12, marginBottom:16 }}>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
@@ -1329,10 +1325,10 @@ function PageContratti({ cur }) {
             </div>
           ))}
         </div>
-        {c.note && <div style={{ marginTop:10, color:C.sec, fontSize:13, borderTop:`1px solid ${C.border}`, paddingTop:8 }}>{String(c.note)}</div>}
+        {sel.note && <div style={{ marginTop:10, color:C.sec, fontSize:13, borderTop:`1px solid ${C.border}`, paddingTop:8 }}>{String(sel.note)}</div>}
       </div>
     );
-  };
+  })() : null;
 
   return (
     <div style={{ display:"grid", gridTemplateColumns: sel ? "280px 1fr" : "1fr", gap:16, alignItems:"start" }}>
@@ -1348,7 +1344,7 @@ function PageContratti({ cur }) {
                   <Inp label="Nome azienda" value={nf.nome} onChange={e=>setNf(p=>({...p,nome:e.target.value}))} placeholder="Es. Ristorante Rossi" />
                   <Inp label="Data ingresso" type="date" value={nf.data} onChange={e=>setNf(p=>({...p,data:e.target.value}))} />
                 </div>
-                <DettagliForm />
+                {formJSX}
                 <div style={{ display:"flex", gap:8, marginTop:14 }}><Btn onClick={create} color={color}>Crea</Btn><Btn onClick={() => setShowNew(false)} ghost>Annulla</Btn></div>
               </Card>
             )}
@@ -1389,7 +1385,7 @@ function PageContratti({ cur }) {
           {/* Form modifica info */}
           {editInfo && canCreate && (
             <div style={{ background:C.bg, borderRadius:10, padding:14, marginBottom:16 }}>
-              <DettagliForm />
+              {formJSX}
               <div style={{ display:"flex", gap:8, marginTop:12 }}>
                 <Btn onClick={saveInfo} color={color}>Salva</Btn>
                 <Btn onClick={() => setEditInfo(false)} ghost>Annulla</Btn>
@@ -1397,8 +1393,7 @@ function PageContratti({ cur }) {
             </div>
           )}
 
-          {/* Vista dettagli */}
-          {!editInfo && <DettagliView c={sel} />}
+          {!editInfo && viewJSX}
 
           {/* Checklist per sezione */}
           {SECS.map(sec => {
