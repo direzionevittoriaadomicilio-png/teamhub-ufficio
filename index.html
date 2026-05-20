@@ -40,7 +40,15 @@ async function dbUpsert(table, data) {
     });
   } catch { /* ignore */ }
 }
-async function dbDelete(table, filter) {
+async function dbUpsertTurni(data) {
+  try {
+    await fetch(`${SB_URL}/rest/v1/turni?on_conflict=week_key,user_id,day_index`, {
+      method: "POST",
+      headers: { ...HDR, Prefer: "resolution=merge-duplicates" },
+      body: JSON.stringify(data),
+    });
+  } catch { /* ignore */ }
+}
   try { await fetch(`${SB_URL}/rest/v1/${table}?${filter}`, { method: "DELETE", headers: HDR }); }
   catch { /* ignore */ }
 }
@@ -1453,11 +1461,8 @@ function PageTurni({ cur }) {
     if (!canEdit) return;
     const ex  = rows.find(t => t.user_id===uid && t.day_index===di);
     const nxt = { week_key:wk, user_id:uid, day_index:di, inizio:"", fine:"", riposo:false, ...(ex||{}), [field]:value };
-    // Non passiamo id per nuovi record — lasciamo che Postgres lo generi con SERIAL
-    // Per record esistenti usiamo l'id intero dal database
-    if (ex && ex.id && typeof ex.id === "number") nxt.id = ex.id;
-    else delete nxt.id;
-    await dbUpsert("turni", nxt);
+    delete nxt.id; // lascia gestire il conflict alla UNIQUE constraint
+    await dbUpsertTurni(nxt);
     setRows(p => [...p.filter(t => !(t.user_id===uid && t.day_index===di)), nxt]);
   };
 
