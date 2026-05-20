@@ -1177,6 +1177,75 @@ function PageTurni({ cur }) {
   );
 }
 
+// ─── Componenti ausiliari per PageContratti ───────────────────────────────────
+function ContrattoForm({ nf, setNf, color, canSeePrivate }) {
+  return (
+    <div style={{ display:"grid", gap:12 }}>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+        <Inp label="Referente" value={nf.referente} onChange={e=>setNf(p=>({...p,referente:e.target.value}))} placeholder="Nome contatto" />
+        <Inp label="Tipo locale" value={nf.tipo_locale} onChange={e=>setNf(p=>({...p,tipo_locale:e.target.value}))} placeholder="Es. Ristorante, Pizzeria..." />
+        <Inp label="Email" value={nf.email} onChange={e=>setNf(p=>({...p,email:e.target.value}))} placeholder="email@esempio.it" />
+        <Inp label="Giorno di chiusura" value={nf.giorno_chiusura} onChange={e=>setNf(p=>({...p,giorno_chiusura:e.target.value}))} placeholder="Es. Lunedì" />
+        <Inp label="Orario apertura" value={nf.orario_apertura} onChange={e=>setNf(p=>({...p,orario_apertura:e.target.value}))} placeholder="Es. 12:00" />
+        <Inp label="Orario chiusura" value={nf.orario_chiusura} onChange={e=>setNf(p=>({...p,orario_chiusura:e.target.value}))} placeholder="Es. 22:00" />
+        <Inp label="Aggiunta menu €" value={nf.aggiunta_menu} onChange={e=>setNf(p=>({...p,aggiunta_menu:e.target.value}))} placeholder="Es. +1.50" />
+        {canSeePrivate && <Inp label="Commissione %" value={nf.commissione} onChange={e=>setNf(p=>({...p,commissione:e.target.value}))} placeholder="Es. 15%" />}
+        {canSeePrivate && <Inp label="PEC" value={nf.pec} onChange={e=>setNf(p=>({...p,pec:e.target.value}))} placeholder="pec@esempio.it" />}
+      </div>
+      <div>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+          <label style={{ color:C.sec, fontSize:11, fontWeight:600 }}>Numeri di telefono</label>
+          <button onClick={() => setNf(p=>({...p,telefoni:[...p.telefoni,""]}))}
+            style={{ background:"none", border:"none", color, fontSize:12, cursor:"pointer", fontFamily:"inherit", fontWeight:600 }}>+ aggiungi</button>
+        </div>
+        {nf.telefoni.map((tel,i) => (
+          <div key={i} style={{ display:"flex", gap:6, marginBottom:6 }}>
+            <input value={tel} onChange={e=>{const t=[...nf.telefoni];t[i]=e.target.value;setNf(p=>({...p,telefoni:t}));}}
+              placeholder="Es. 0932 000000" style={{ flex:1, background:C.input, border:"1px solid "+C.border, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none" }} />
+            {nf.telefoni.length > 1 && (
+              <button onClick={() => setNf(p=>({...p,telefoni:p.telefoni.filter((_,j)=>j!==i)}))}
+                style={{ background:"none", border:"none", color:"#dc2626", cursor:"pointer", fontSize:18, padding:"0 6px" }}>×</button>
+            )}
+          </div>
+        ))}
+      </div>
+      <div>
+        <label style={{ color:C.sec, fontSize:11, fontWeight:600, display:"block", marginBottom:4 }}>Note</label>
+        <textarea value={nf.note} onChange={e=>setNf(p=>({...p,note:e.target.value}))} placeholder="Note aggiuntive..." rows={2}
+          style={{ background:C.input, border:"1px solid "+C.border, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none", width:"100%", boxSizing:"border-box", resize:"vertical" }} />
+      </div>
+    </div>
+  );
+}
+
+function ContrattoView({ sel, canSeePrivate }) {
+  const tels = Array.isArray(sel.telefoni) ? sel.telefoni.filter(Boolean) : [];
+  const orari = sel.orario_apertura && sel.orario_chiusura ? sel.orario_apertura+" – "+sel.orario_chiusura : sel.orario_apertura||sel.orario_chiusura||"";
+  const rows = [
+    { l:"Referente",       v:sel.referente },
+    { l:"Tipo locale",     v:sel.tipo_locale },
+    { l:"Email",           v:sel.email },
+    { l:"Telefoni",        v:tels.join(" / ") },
+    { l:"Giorno chiusura", v:sel.giorno_chiusura },
+    { l:"Orari",           v:orari },
+    { l:"Aggiunta menu",   v:sel.aggiunta_menu },
+  ].concat(canSeePrivate ? [{ l:"Commissione", v:sel.commissione },{ l:"PEC", v:sel.pec }] : []).filter(r=>r.v);
+  if (rows.length === 0 && !sel.note) return null;
+  return (
+    <div style={{ background:C.bg, borderRadius:10, padding:12, marginBottom:16 }}>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
+        {rows.map(r => (
+          <div key={r.l}>
+            <div style={{ color:C.muted, fontSize:10, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.06em" }}>{r.l}</div>
+            <div style={{ color:C.text, fontSize:13, fontWeight:500, marginTop:1 }}>{String(r.v)}</div>
+          </div>
+        ))}
+      </div>
+      {sel.note && <div style={{ marginTop:10, color:C.sec, fontSize:13, borderTop:"1px solid "+C.border, paddingTop:8 }}>{String(sel.note)}</div>}
+    </div>
+  );
+}
+
 // ─── PAGE: CONTRATTI ──────────────────────────────────────────────────────────
 function PageContratti({ cur }) {
   const canCreate = ADMINS.includes(cur.id);
@@ -1260,76 +1329,7 @@ function PageContratti({ cur }) {
     { key:"soc",  label:"📣 Social Media", tasks:CT_SOC, color:"#7c3aed" },
     { key:"cont", label:"📊 Contabilità",  tasks:CT_CON, color:"#059669" },
   ];
-  const canSec = sec => ADMINS.includes(cur.id) || (sec==="app"&&cur.id==="app") || (sec==="soc"&&cur.id==="social") || (sec==="cont"&&cur.id==="contabilita");
-
-  // Form campi (riusato per nuovo e modifica)
-  const formJSX = (
-    <div style={{ display:"grid", gap:12 }}>
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
-        <Inp label="Referente" value={nf.referente} onChange={e=>setNf(p=>({...p,referente:e.target.value}))} placeholder="Nome contatto" />
-        <Inp label="Tipo locale" value={nf.tipo_locale} onChange={e=>setNf(p=>({...p,tipo_locale:e.target.value}))} placeholder="Es. Ristorante, Pizzeria..." />
-        <Inp label="Email" value={nf.email} onChange={e=>setNf(p=>({...p,email:e.target.value}))} placeholder="email@esempio.it" />
-        <Inp label="Giorno di chiusura" value={nf.giorno_chiusura} onChange={e=>setNf(p=>({...p,giorno_chiusura:e.target.value}))} placeholder="Es. Lunedì" />
-        <Inp label="Orario apertura" value={nf.orario_apertura} onChange={e=>setNf(p=>({...p,orario_apertura:e.target.value}))} placeholder="Es. 12:00" />
-        <Inp label="Orario chiusura" value={nf.orario_chiusura} onChange={e=>setNf(p=>({...p,orario_chiusura:e.target.value}))} placeholder="Es. 22:00" />
-        <Inp label="Aggiunta menu €" value={nf.aggiunta_menu} onChange={e=>setNf(p=>({...p,aggiunta_menu:e.target.value}))} placeholder="Es. +1.50" />
-        {canSeePrivate && <Inp label="Commissione %" value={nf.commissione} onChange={e=>setNf(p=>({...p,commissione:e.target.value}))} placeholder="Es. 15%" />}
-        {canSeePrivate && <Inp label="PEC" value={nf.pec} onChange={e=>setNf(p=>({...p,pec:e.target.value}))} placeholder="pec@esempio.it" />}
-      </div>
-      <div>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-          <label style={{ color:C.sec, fontSize:11, fontWeight:600 }}>Numeri di telefono</label>
-          <button onClick={() => setNf(p=>({...p,telefoni:[...p.telefoni,""]}))}
-            style={{ background:"none", border:"none", color, fontSize:12, cursor:"pointer", fontFamily:"inherit", fontWeight:600 }}>+ aggiungi</button>
-        </div>
-        {nf.telefoni.map((tel,i) => (
-          <div key={i} style={{ display:"flex", gap:6, marginBottom:6 }}>
-            <input value={tel} onChange={e => { const t=[...nf.telefoni]; t[i]=e.target.value; setNf(p=>({...p,telefoni:t})); }}
-              placeholder="Es. 0932 000000" style={{ flex:1, background:C.input, border:`1px solid ${C.border}`, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none" }} />
-            {nf.telefoni.length > 1 && (
-              <button onClick={() => setNf(p=>({...p,telefoni:p.telefoni.filter((_,j)=>j!==i)}))}
-                style={{ background:"none", border:"none", color:"#dc2626", cursor:"pointer", fontSize:18, padding:"0 6px" }}>×</button>
-            )}
-          </div>
-        ))}
-      </div>
-      <div>
-        <label style={{ color:C.sec, fontSize:11, fontWeight:600, display:"block", marginBottom:4 }}>Note</label>
-        <textarea value={nf.note} onChange={e=>setNf(p=>({...p,note:e.target.value}))} placeholder="Note aggiuntive..." rows={2}
-          style={{ background:C.input, border:`1px solid ${C.border}`, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:13, fontFamily:"inherit", outline:"none", width:"100%", boxSizing:"border-box", resize:"vertical" }} />
-      </div>
-    </div>
-  );
-
-  let viewJSX = null;
-  if (sel) {
-    const tels = Array.isArray(sel.telefoni) ? sel.telefoni.filter(Boolean) : [];
-    const selRows = [
-      { l:"Referente",       v:sel.referente },
-      { l:"Tipo locale",     v:sel.tipo_locale },
-      { l:"Email",           v:sel.email },
-      { l:"Telefoni",        v:tels.join(" / ") },
-      { l:"Giorno chiusura", v:sel.giorno_chiusura },
-      { l:"Orari",           v:sel.orario_apertura && sel.orario_chiusura ? sel.orario_apertura+" – "+sel.orario_chiusura : sel.orario_apertura||sel.orario_chiusura },
-      { l:"Aggiunta menu",   v:sel.aggiunta_menu },
-    ].concat(canSeePrivate ? [{ l:"Commissione", v:sel.commissione }, { l:"PEC", v:sel.pec }] : [])
-     .filter(r => r.v);
-    if (selRows.length > 0 || sel.note) {
-      viewJSX = (
-        <div style={{ background:C.bg, borderRadius:10, padding:12, marginBottom:16 }}>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
-            {selRows.map(r => (
-              <div key={r.l}>
-                <div style={{ color:C.muted, fontSize:10, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.06em" }}>{r.l}</div>
-                <div style={{ color:C.text, fontSize:13, fontWeight:500, marginTop:1 }}>{String(r.v)}</div>
-              </div>
-            ))}
-          </div>
-          {sel.note && <div style={{ marginTop:10, color:C.sec, fontSize:13, borderTop:"1px solid "+C.border, paddingTop:8 }}>{String(sel.note)}</div>}
-        </div>
-      );
-    }
-  }
+  const canSec = sec => ADMINS.includes(cur.id)||(sec==="app"&&cur.id==="app")||(sec==="soc"&&cur.id==="social")||(sec==="cont"&&cur.id==="contabilita");
 
   return (
     <div style={{ display:"grid", gridTemplateColumns: sel ? "280px 1fr" : "1fr", gap:16, alignItems:"start" }}>
@@ -1345,7 +1345,7 @@ function PageContratti({ cur }) {
                   <Inp label="Nome azienda" value={nf.nome} onChange={e=>setNf(p=>({...p,nome:e.target.value}))} placeholder="Es. Ristorante Rossi" />
                   <Inp label="Data ingresso" type="date" value={nf.data} onChange={e=>setNf(p=>({...p,data:e.target.value}))} />
                 </div>
-                {formJSX}
+                <ContrattoForm nf={nf} setNf={setNf} color={color} canSeePrivate={canSeePrivate} />
                 <div style={{ display:"flex", gap:8, marginTop:14 }}><Btn onClick={create} color={color}>Crea</Btn><Btn onClick={() => setShowNew(false)} ghost>Annulla</Btn></div>
               </Card>
             )}
@@ -1386,7 +1386,7 @@ function PageContratti({ cur }) {
           {/* Form modifica info */}
           {editInfo && canCreate && (
             <div style={{ background:C.bg, borderRadius:10, padding:14, marginBottom:16 }}>
-              {formJSX}
+              <ContrattoForm nf={nf} setNf={setNf} color={color} canSeePrivate={canSeePrivate} />
               <div style={{ display:"flex", gap:8, marginTop:12 }}>
                 <Btn onClick={saveInfo} color={color}>Salva</Btn>
                 <Btn onClick={() => setEditInfo(false)} ghost>Annulla</Btn>
@@ -1394,7 +1394,7 @@ function PageContratti({ cur }) {
             </div>
           )}
 
-          {!editInfo && viewJSX}
+          {!editInfo && sel && <ContrattoView sel={sel} canSeePrivate={canSeePrivate} />}
 
           {/* Checklist per sezione */}
           {SECS.map(sec => {
