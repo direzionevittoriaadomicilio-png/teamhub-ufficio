@@ -131,14 +131,144 @@ const CT_CON = [
 ];
 const ALL_CT = [...CT_APP, ...CT_SOC, ...CT_CON];
 
+// ─── COMUNICAZIONE ────────────────────────────────────────────────────────────
+function ComunicazioneCard({ msg, cur, onLetto, onDelete, canSeeAll }) {
+  const mittente  = getUser(msg.mittente);
+  const dests     = Array.isArray(msg.destinatari) ? msg.destinatari : [];
+  const destUsers = dests.map(id => getUser(id)).filter(Boolean);
+  const letti_    = msg.letti && typeof msg.letti === "object" ? msg.letti : {};
+  const isLetto   = !!letti_[cur.id];
+  const isOwn     = msg.mittente === cur.id;
+  const tuttiLetto= dests.every(id => letti_[id]);
+  const isAssigned= dests.includes(cur.id);
+  const bgColor   = (!isLetto && isAssigned) ? "#fffbeb" : "#fff";
+  return (
+    <div style={{ background:bgColor, border:"1px solid "+((isAssigned && !isLetto) ? "#fde68a" : C.border), borderRadius:12, padding:14, marginBottom:10, boxShadow:C.shadow }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
+        <div style={{ display:"flex", gap:8, flexWrap:"wrap", alignItems:"center" }}>
+          {mittente && <span style={{ background:mittente.bg, color:mittente.color, padding:"2px 10px", borderRadius:20, fontSize:12, fontWeight:700 }}>{mittente.name}</span>}
+          <span style={{ color:C.muted, fontSize:11 }}>→</span>
+          {destUsers.map(u => <span key={u.id} style={{ background:u.bg, color:u.color, padding:"2px 10px", borderRadius:20, fontSize:12, fontWeight:600 }}>{u.name}{letti_[u.id] ? " ✓" : ""}</span>)}
+          {(!isAssigned && !isOwn && canSeeAll) && <span style={{ color:C.muted, fontSize:11, fontStyle:"italic" }}>— visibile come admin</span>}
+        </div>
+        <div style={{ display:"flex", gap:6, alignItems:"center", flexShrink:0 }}>
+          <span style={{ color:C.muted, fontSize:11 }}>{String(msg.created_at||"")}</span>
+          {(isOwn || ADMINS.includes(cur.id)) && <button onClick={onDelete} style={{ background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:16, lineHeight:1 }}>×</button>}
+        </div>
+      </div>
+      <p style={{ color:C.text, fontSize:14, lineHeight:1.7, margin:"0 0 10px", whiteSpace:"pre-wrap" }}>{String(msg.testo||"")}</p>
+      {(isAssigned && !isLetto) && <button onClick={onLetto} style={{ background:"#059669", color:"#fff", border:"none", borderRadius:8, padding:"6px 16px", cursor:"pointer", fontFamily:"inherit", fontWeight:700, fontSize:13 }}>✓ Segna come letto</button>}
+      {(isAssigned && isLetto) && <span style={{ color:"#059669", fontSize:12, fontWeight:600 }}>✓ Letto</span>}
+      {(isOwn && !isAssigned) && <span style={{ color:tuttiLetto?"#059669":C.muted, fontSize:12, fontWeight:600 }}>{tuttiLetto ? "✓ Letto da tutti" : "⌛ In attesa di lettura..."}</span>}
+    </div>
+  );
+}
+
+function PageComunicazione({ cur }) {
+  const color     = "#6366f1";
+  const canSeeAll = ADMINS.includes(cur.id);
+  const [msgs,  setMsgs]  = useState([]);
+  const [testo, setTesto] = useState("");
+  const [dests, setDests] = useState([]);
+  const [load,  setLoad]  = useState(true);
+  const [tab,   setTab]   = useState("ricevute");
+
+  const load_ = async () => {
+    setLoad(true);
+    const d = await dbGet("comunicazioni", "?order=created_at.desc");
+    setMsgs(d);
+    setLoad(false);
+  };
+  useEffect(() => { load_(); }, []);
+
+  const toggleDest = id => setDests(p => p.includes(id) ? p.filter(x=>x!==id) : [...p,id]);
+
+  const invia = async () => {
+    if (!testo.trim() || dests.length === 0) return;
+    const ora = new Date().toLocaleString("it-IT", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
+    await dbUpsert("comunicazioni", { id:Date.now(), testo:testo.trim(), mittente:cur.id, destinatari:dests, letti:{}, created_at:ora });
+    setTesto(""); setDests([]);
+    load_();
+  };
+
+  const segnaLetto = async msg => {
+    const letti = { ...(msg.letti||{}), [cur.id]: true };
+    await dbUpsert("comunicazioni", { ...msg, letti });
+    setMsgs(p => p.map(m => m.id===msg.id ? { ...m, letti } : m));
+  };
+
+  const elimina = async id => {
+    await dbDelete("comunicazioni", `id=eq.${id}`);
+    setMsgs(p => p.filter(m => m.id!==id));
+  };
+
+  const ricevute = msgs.filter(m => (Array.isArray(m.destinatari)?m.destinatari:[]).includes(cur.id));
+  const inviate  = msgs.filter(m => m.mittente === cur.id);
+  const nonLette = ricevute.filter(m => !(m.letti||{})[cur.id]).length;
+  const listDa   = tab==="ricevute" ? ricevute : tab==="inviate" ? inviate : msgs;
+
+  const tabList = [
+    {id:"ricevute", l:"📥 Ricevute"+(nonLette>0?" ("+nonLette+")":"")},
+    {id:"inviate",  l:"📤 Inviate"},
+  ];
+  if (canSeeAll) tabList.push({id:"tutte", l:"👁 Tutte"});
+
+  return (
+    <div>
+      <TBar tabs={tabList} active={tab} onSelect={setTab} color={color} />
+
+      <Card style={{ marginBottom:20, borderLeft:"3px solid "+color }}>
+        <STitle color={color}>Nuova comunicazione</STitle>
+        <div style={{ marginBottom:12 }}>
+          <label style={{ color:C.sec, fontSize:11, fontWeight:600, display:"block", marginBottom:8 }}>Invia a</label>
+          <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+            {USERS.filter(u => u.id !== cur.id).map(u => {
+              const sel = dests.includes(u.id);
+              return (
+                <button key={u.id} onClick={() => toggleDest(u.id)}
+                  style={{ display:"flex", alignItems:"center", gap:6, padding:"7px 14px", borderRadius:8, cursor:"pointer", fontFamily:"inherit",
+                    border:"2px solid "+(sel?u.color:C.border), background:sel?u.bg:"#fff" }}>
+                  <div style={{ width:8, height:8, borderRadius:"50%", background:u.color }} />
+                  <span style={{ color:sel?u.color:C.sec, fontWeight:600, fontSize:13 }}>{u.name}</span>
+                  {sel && <span style={{ color:u.color }}>✓</span>}
+                </button>
+              );
+            })}
+          </div>
+          {dests.length === 0 && <p style={{ color:"#dc2626", fontSize:11, margin:"6px 0 0" }}>Seleziona almeno un destinatario.</p>}
+        </div>
+        <div style={{ marginBottom:12 }}>
+          <label style={{ color:C.sec, fontSize:11, fontWeight:600, display:"block", marginBottom:4 }}>Messaggio</label>
+          <textarea value={testo} onChange={e=>setTesto(e.target.value)} placeholder="Scrivi il tuo messaggio..." rows={3}
+            style={{ background:C.input, border:"1px solid "+C.border, borderRadius:8, color:C.text, padding:"8px 12px", fontSize:14, fontFamily:"inherit", outline:"none", width:"100%", boxSizing:"border-box", resize:"vertical", lineHeight:1.6 }} />
+        </div>
+        <Btn onClick={invia} color={color}>📤 Invia</Btn>
+      </Card>
+
+      {load ? <Spin /> : listDa.length === 0 ? (
+        <Card><p style={{ color:C.muted, fontSize:13, margin:0 }}>
+          {tab==="ricevute" ? "Nessuna comunicazione ricevuta." : tab==="inviate" ? "Nessuna comunicazione inviata." : "Nessuna comunicazione."}
+        </p></Card>
+      ) : listDa.map(msg => (
+        <ComunicazioneCard key={msg.id} msg={msg} cur={cur}
+          onLetto={() => segnaLetto(msg)}
+          onDelete={() => elimina(msg.id)}
+          canSeeAll={canSeeAll}
+        />
+      ))}
+    </div>
+  );
+}
+
 const NAV = [
-  { id:"home",  icon:"🏠", label:"Home",       roles:["all"] },
-  { id:"app",   icon:"📱", label:"App",         roles:["app","contabilita","admin"] },
-  { id:"social",icon:"📣", label:"Social",      roles:["social","contabilita","admin"] },
-  { id:"cont",  icon:"📊", label:"Contabilità", roles:["contabilita","admin"] },
-  { id:"turni", icon:"🗓️", label:"Turni",       roles:["all"] },
-  { id:"contr", icon:"🆕", label:"Contratti",   roles:["all"] },
-  { id:"task",  icon:"✅", label:"Task",         roles:["all"] },
+  { id:"home",   icon:"🏠", label:"Home",          roles:["all"] },
+  { id:"app",    icon:"📱", label:"App",            roles:["app","contabilita","admin"] },
+  { id:"social", icon:"📣", label:"Social",         roles:["social","contabilita","admin"] },
+  { id:"cont",   icon:"📊", label:"Contabilità",    roles:["contabilita","admin"] },
+  { id:"turni",  icon:"🗓️", label:"Turni",          roles:["all"] },
+  { id:"contr",  icon:"🆕", label:"Contratti",      roles:["all"] },
+  { id:"task",   icon:"✅", label:"Task",            roles:["all"] },
+  { id:"comm",   icon:"💬", label:"Comunicazione",  roles:["all"] },
 ];
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
@@ -840,7 +970,7 @@ function PageApp({ cur }) {
   const color = cur.color;
   return (
     <div>
-      <TBar tabs={[{id:"cl",l:"✅ Checklist"},{id:"fuel",l:"⛽ Carburante"},{id:"carnet",l:"🎫 Carnet"},{id:"note",l:"📝 Note"}]} active={tab} onSelect={setTab} color={color} />
+      <TBar tabs={[{id:"cl",l:"✅ Checklist"},{id:"fuel",l:"⛽ Carburante"},{id:"carnet",l:"🎫 Carnet"},{id:"note",l:"📝 Riepilogo giornaliero"}]} active={tab} onSelect={setTab} color={color} />
       {tab==="cl"     && <Checklist canEdit={canEdit} color={color} />}
       {tab==="fuel"   && <Carburante canEdit={canEdit} />}
       {tab==="carnet" && <Carnet canEdit={canEdit} />}
@@ -882,7 +1012,7 @@ function PageSocial({ cur }) {
 
   return (
     <div>
-      <TBar tabs={[{id:"cal",l:"📅 Calendario"},{id:"note",l:"📝 Note"}]} active={tab} onSelect={setTab} color={color} />
+      <TBar tabs={[{id:"cal",l:"📅 Calendario"},{id:"note",l:"📝 Riepilogo giornaliero"}]} active={tab} onSelect={setTab} color={color} />
       {tab==="note" && <Diario ruolo="social" color={color} />}
       {tab==="cal" && (
         <div>
@@ -1040,6 +1170,236 @@ function ChecklistManuale({ mk, canEdit, color }) {
   );
 }
 
+// ─── RIEPILOGO CONTABILITÀ ────────────────────────────────────────────────────
+function RiepilogoContab({ color }) {
+  const [fuel,   setFuel]   = useState([]);
+  const [carnet, setCarnet] = useState([]);
+  const [loading,setLoading]= useState(true);
+  const [anno,   setAnno]   = useState(new Date().getFullYear());
+
+  useEffect(() => {
+    Promise.all([
+      dbGet("fuel",   "?order=data.asc"),
+      dbGet("carnet", "?order=data.asc"),
+    ]).then(([f, c]) => { setFuel(f); setCarnet(c); setLoading(false); });
+  }, []);
+
+  const years = [...new Set([
+    ...fuel.map(e=>(e.data||"").slice(0,4)),
+    ...carnet.map(e=>(e.data||"").slice(0,4)),
+  ].filter(Boolean))].sort().reverse();
+
+  if (!years.includes(String(anno)) && years.length > 0) {
+    // setAnno(parseInt(years[0])); // evita loop
+  }
+
+  // Filtra per anno
+  const fuelY   = fuel.filter(e=>(e.data||"").startsWith(String(anno)));
+  const carnetY = carnet.filter(e=>(e.data||"").startsWith(String(anno)));
+
+  // ── Riepilogo carburante per veicolo per mese ──
+  const fuelByVeicMese = {};
+  VEICOLI.forEach(v => { fuelByVeicMese[v.id] = {}; });
+  fuelY.forEach(e => {
+    const mese = (e.data||"").slice(5,7);
+    const vId  = e.veicolo;
+    if (!fuelByVeicMese[vId]) fuelByVeicMese[vId] = {};
+    if (!fuelByVeicMese[vId][mese]) fuelByVeicMese[vId][mese] = { eur:0, lit:0, n:0 };
+    fuelByVeicMese[vId][mese].eur += parseFloat(e.importo||0);
+    fuelByVeicMese[vId][mese].lit += parseFloat(e.litri||0);
+    fuelByVeicMese[vId][mese].n   += 1;
+  });
+
+  const mesiAttivi = [...new Set(fuelY.map(e=>(e.data||"").slice(5,7)).filter(Boolean))].sort();
+
+  // ── Riepilogo carnet per mese ──
+  const carnetByMese = {};
+  carnetY.forEach(e => {
+    const mese = (e.data||"").slice(5,7);
+    if (!carnetByMese[mese]) carnetByMese[mese] = { incassato:0, pendente:0, n:0 };
+    const val = parseFloat(e.valore||0);
+    if (e.pagato==="si") carnetByMese[mese].incassato += val;
+    else carnetByMese[mese].pendente += val;
+    carnetByMese[mese].n += 1;
+  });
+
+  const mesiCarnet = [...new Set(carnetY.map(e=>(e.data||"").slice(5,7)).filter(Boolean))].sort();
+
+  const totFuelEur = fuelY.reduce((s,e)=>s+parseFloat(e.importo||0),0);
+  const totFuelLit = fuelY.reduce((s,e)=>s+parseFloat(e.litri||0),0);
+  const totInc     = carnetY.filter(e=>e.pagato==="si").reduce((s,e)=>s+parseFloat(e.valore||0),0);
+  const totPend    = carnetY.filter(e=>e.pagato!=="si").reduce((s,e)=>s+parseFloat(e.valore||0),0);
+
+  const thStyle = { color:C.muted, fontSize:11, fontWeight:700, padding:"8px 10px", textAlign:"center", borderBottom:"2px solid "+C.border, whiteSpace:"nowrap" };
+  const tdStyle = (bold) => ({ padding:"8px 10px", fontSize:13, textAlign:"center", color:bold?C.text:C.sec, fontWeight:bold?700:400, borderBottom:"1px solid "+C.border });
+
+  if (loading) return <Spin />;
+
+  return (
+    <div style={{ display:"grid", gap:20 }}>
+      {/* Anno selector */}
+      <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+        <span style={{ color:C.text, fontWeight:700, fontSize:16 }}>Anno</span>
+        <div style={{ display:"flex", gap:6 }}>
+          {(years.length > 0 ? years : [String(anno)]).map(y => (
+            <button key={y} onClick={()=>setAnno(parseInt(y))}
+              style={{ padding:"5px 14px", borderRadius:20, border:"1px solid "+(anno===parseInt(y)?color:C.border),
+                background:anno===parseInt(y)?color+"14":"#fff", color:anno===parseInt(y)?color:C.sec,
+                cursor:"pointer", fontWeight:600, fontSize:13, fontFamily:"inherit" }}>{y}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* KPI annuali */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))", gap:12 }}>
+        {[
+          { l:"Carburante totale", v:"€"+totFuelEur.toFixed(0), c:"#2563eb" },
+          { l:"Litri totali",      v:totFuelLit.toFixed(0)+" L", c:"#7c3aed" },
+          { l:"Carnet incassato",  v:"€"+totInc.toFixed(0),      c:"#059669" },
+          { l:"Carnet pendente",   v:"€"+totPend.toFixed(0),     c:"#dc2626" },
+        ].map((k,i) => (
+          <div key={i} style={{ background:"#fff", border:"1px solid "+C.border, borderTop:"3px solid "+k.c, borderRadius:12, padding:"14px 16px", boxShadow:C.shadow }}>
+            <div style={{ color:C.muted, fontSize:10, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:8 }}>{k.l}</div>
+            <div style={{ color:k.c, fontSize:24, fontWeight:800 }}>{k.v}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Riepilogo carburante per veicolo */}
+      <Card>
+        <STitle color="#2563eb">Carburante per veicolo — {anno}</STitle>
+        {mesiAttivi.length === 0 ? <p style={{ color:C.muted, fontSize:13 }}>Nessun dato per {anno}.</p> : (
+          <div style={{ overflowX:"auto" }}>
+            <table style={{ width:"100%", borderCollapse:"collapse" }}>
+              <thead>
+                <tr>
+                  <th style={{ ...thStyle, textAlign:"left" }}>Veicolo</th>
+                  {mesiAttivi.map(m => <th key={m} style={thStyle}>{MESI_S[parseInt(m,10)-1]}</th>)}
+                  <th style={{ ...thStyle, color:"#2563eb" }}>TOTALE</th>
+                </tr>
+              </thead>
+              <tbody>
+                {VEICOLI.map(v => {
+                  const dati = fuelByVeicMese[v.id]||{};
+                  const totV = Object.values(dati).reduce((s,d)=>s+d.eur,0);
+                  if (totV === 0) return null;
+                  return (
+                    <tr key={v.id}>
+                      <td style={{ ...tdStyle(true), textAlign:"left", color:v.color }}>{v.nome}</td>
+                      {mesiAttivi.map(m => (
+                        <td key={m} style={tdStyle(false)}>
+                          {dati[m] ? (
+                            <div>
+                              <div style={{ color:"#059669", fontWeight:700 }}>€{dati[m].eur.toFixed(0)}</div>
+                              <div style={{ color:C.muted, fontSize:10 }}>{dati[m].lit.toFixed(0)}L</div>
+                            </div>
+                          ) : <span style={{ color:"#e2e8f0" }}>—</span>}
+                        </td>
+                      ))}
+                      <td style={{ ...tdStyle(true), color:"#2563eb" }}>€{totV.toFixed(0)}</td>
+                    </tr>
+                  );
+                })}
+                <tr style={{ background:"#f8fafc" }}>
+                  <td style={{ ...tdStyle(true), textAlign:"left" }}>TOTALE MESE</td>
+                  {mesiAttivi.map(m => {
+                    const totM = VEICOLI.reduce((s,v)=>s+(fuelByVeicMese[v.id]?.[m]?.eur||0),0);
+                    return <td key={m} style={{ ...tdStyle(true), color:"#2563eb" }}>€{totM.toFixed(0)}</td>;
+                  })}
+                  <td style={{ ...tdStyle(true), color:"#2563eb", fontSize:15 }}>€{totFuelEur.toFixed(0)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+
+      {/* Riepilogo carnet per mese */}
+      <Card>
+        <STitle color="#059669">Carnet per mese — {anno}</STitle>
+        {mesiCarnet.length === 0 ? <p style={{ color:C.muted, fontSize:13 }}>Nessun dato per {anno}.</p> : (
+          <div style={{ overflowX:"auto" }}>
+            <table style={{ width:"100%", borderCollapse:"collapse" }}>
+              <thead>
+                <tr>
+                  <th style={{ ...thStyle, textAlign:"left" }}>Mese</th>
+                  <th style={thStyle}>Uscite</th>
+                  <th style={thStyle}>Incassato</th>
+                  <th style={thStyle}>Pendente</th>
+                  <th style={thStyle}>Totale</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mesiCarnet.map(m => {
+                  const d = carnetByMese[m];
+                  return (
+                    <tr key={m}>
+                      <td style={{ ...tdStyle(true), textAlign:"left" }}>{MESI[parseInt(m,10)-1]}</td>
+                      <td style={tdStyle(false)}>{d.n}</td>
+                      <td style={{ ...tdStyle(true), color:"#059669" }}>€{d.incassato.toFixed(0)}</td>
+                      <td style={{ ...tdStyle(false), color:"#dc2626" }}>€{d.pendente.toFixed(0)}</td>
+                      <td style={{ ...tdStyle(true) }}>€{(d.incassato+d.pendente).toFixed(0)}</td>
+                    </tr>
+                  );
+                })}
+                <tr style={{ background:"#f8fafc" }}>
+                  <td style={{ ...tdStyle(true), textAlign:"left" }}>TOTALE ANNO</td>
+                  <td style={tdStyle(true)}>{carnetY.length}</td>
+                  <td style={{ ...tdStyle(true), color:"#059669", fontSize:15 }}>€{totInc.toFixed(0)}</td>
+                  <td style={{ ...tdStyle(true), color:"#dc2626" }}>€{totPend.toFixed(0)}</td>
+                  <td style={{ ...tdStyle(true), fontSize:15 }}>€{(totInc+totPend).toFixed(0)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+
+      {/* Top aziende carnet */}
+      <Card>
+        <STitle color="#7c3aed">Top aziende carnet — {anno}</STitle>
+        {(() => {
+          const byAz = {};
+          carnetY.forEach(e => {
+            const az = String(e.azienda||"");
+            if (!byAz[az]) byAz[az] = { incassato:0, pendente:0, n:0 };
+            const val = parseFloat(e.valore||0);
+            if (e.pagato==="si") byAz[az].incassato += val;
+            else byAz[az].pendente += val;
+            byAz[az].n += 1;
+          });
+          const sorted = Object.entries(byAz).sort((a,b)=>(b[1].incassato+b[1].pendente)-(a[1].incassato+a[1].pendente));
+          if (sorted.length === 0) return <p style={{ color:C.muted, fontSize:13 }}>Nessun dato per {anno}.</p>;
+          return (
+            <div style={{ overflowX:"auto" }}>
+              <table style={{ width:"100%", borderCollapse:"collapse" }}>
+                <thead>
+                  <tr>
+                    <th style={{ ...thStyle, textAlign:"left" }}>Azienda</th>
+                    <th style={thStyle}>Uscite</th>
+                    <th style={thStyle}>Incassato</th>
+                    <th style={thStyle}>Pendente</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.map(([az, d]) => (
+                    <tr key={az}>
+                      <td style={{ ...tdStyle(true), textAlign:"left" }}>{az}</td>
+                      <td style={tdStyle(false)}>{d.n}</td>
+                      <td style={{ ...tdStyle(true), color:"#059669" }}>€{d.incassato.toFixed(0)}</td>
+                      <td style={{ ...tdStyle(false), color:"#dc2626" }}>€{d.pendente.toFixed(0)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        })()}
+      </Card>
+    </div>
+  );
+}
+
 // ─── PAGE: CONTABILITÀ ────────────────────────────────────────────────────────
 function PageCont({ cur }) {
   const canEdit = ADMINS.includes(cur.id);
@@ -1061,9 +1421,10 @@ function PageCont({ cur }) {
 
   return (
     <div>
-      <TBar tabs={[{id:"fuel",l:"⛽ Carburante"},{id:"carnet",l:"🎫 Carnet"},{id:"cl",l:"📋 Checklist"}]} active={tab} onSelect={setTab} color={color} />
+      <TBar tabs={[{id:"fuel",l:"⛽ Carburante"},{id:"carnet",l:"🎫 Carnet"},{id:"cl",l:"📋 Checklist"},{id:"riepilogo",l:"📈 Riepilogo"}]} active={tab} onSelect={setTab} color={color} />
       {tab==="fuel"   && <Carburante canEdit={canEdit} />}
       {tab==="carnet" && <Carnet canEdit={canEdit} />}
+      {tab==="riepilogo" && <RiepilogoContab color={color} />}
       {tab==="cl" && (
         <div style={{ display:"grid", gap:16 }}>
           <PNav label={mOff===0 ? `Questo mese — ${fmtMon(mk)}` : fmtMon(mk)} onPrev={()=>setMOff(o=>o-1)} onNext={()=>setMOff(o=>Math.min(0,o+1))} atEnd={mOff===0} onReset={()=>setMOff(0)} resetLabel="Questo" />
@@ -1076,7 +1437,7 @@ function PageCont({ cur }) {
 
 // ─── PAGE: TURNI ─────────────────────────────────────────────────────────────
 function PageTurni({ cur }) {
-  const canEdit = ADMINS.includes(cur.id);
+  const canEdit = true; // tutti possono modificare i turni
   const [off,   setOff]  = useState(1);
   const [rows,  setRows] = useState([]);
   const wk    = weekOf(off);
@@ -1091,7 +1452,11 @@ function PageTurni({ cur }) {
   const upd = async (uid, di, field, value) => {
     if (!canEdit) return;
     const ex  = rows.find(t => t.user_id===uid && t.day_index===di);
-    const nxt = { week_key:wk, user_id:uid, day_index:di, ...(ex||{}), id:ex?.id||`${wk}-${uid}-${di}`, [field]:value };
+    const nxt = { week_key:wk, user_id:uid, day_index:di, inizio:"", fine:"", riposo:false, ...(ex||{}), [field]:value };
+    // Non passiamo id per nuovi record — lasciamo che Postgres lo generi con SERIAL
+    // Per record esistenti usiamo l'id intero dal database
+    if (ex && ex.id && typeof ex.id === "number") nxt.id = ex.id;
+    else delete nxt.id;
     await dbUpsert("turni", nxt);
     setRows(p => [...p.filter(t => !(t.user_id===uid && t.day_index===di)), nxt]);
   };
@@ -1266,6 +1631,13 @@ function PageContratti({ cur }) {
   const load_ = async () => { setLoad(true); const d=await dbGet("contracts","?order=created_at.desc"); setContracts(d); setLoad(false); };
   useEffect(() => { load_(); }, []);
 
+  const deleteContract = async (id) => {
+    if (!window.confirm("Eliminare questo contratto? L'operazione non può essere annullata.")) return;
+    await dbDelete("contracts", `id=eq.${id}`);
+    if (selId === id) setSelId(null);
+    load_();
+  };
+
   const create = async () => {
     if (!nf.nome.trim()) return;
     const tasks = {};
@@ -1356,10 +1728,14 @@ function PageContratti({ cur }) {
             const { done, total, pct } = prog(c);
             return (
               <div key={c.id} onClick={() => setSelId(c.id===selId ? null : c.id)}
-                style={{ background: selId===c.id ? `${color}08` : "#fff", border:`1px solid ${selId===c.id ? color : C.border}`, borderRadius:12, padding:14, cursor:"pointer", marginBottom:8, boxShadow:C.shadow }}>
+                style={{ background: selId===c.id ? `${color}08` : "#fff", border:"1px solid "+(selId===c.id ? color : C.border), borderRadius:12, padding:14, cursor:"pointer", marginBottom:8, boxShadow:C.shadow }}>
                 <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
                   <span style={{ color:C.text, fontWeight:700, fontSize:14 }}>{String(c.nome||"")}</span>
-                  <span style={{ color:C.muted, fontSize:11 }}>{String(c.data||"")}</span>
+                  <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                    <span style={{ color:C.muted, fontSize:11 }}>{String(c.data||"")}</span>
+                    {canCreate && <button onClick={e=>{e.stopPropagation();deleteContract(c.id);}}
+                      style={{ background:"none", border:"none", color:"#dc2626", cursor:"pointer", fontSize:16, padding:"0 2px", lineHeight:1 }} title="Elimina contratto">🗑</button>}
+                  </div>
                 </div>
                 {c.tipo_locale && <div style={{ color:C.muted, fontSize:12, marginBottom:6 }}>{String(c.tipo_locale)}</div>}
                 <Progress pct={pct} color={pct===100 ? "#059669" : color} />
@@ -1484,14 +1860,31 @@ function PageTask({ cur }) {
   const canCreate = ADMINS.includes(cur.id);
   const color     = cur.color;
   const [tasks,   setTasks]   = useState([]);
+  const [comms,   setComms]   = useState([]);
   const [showForm,setShowForm]= useState(false);
   const [openId,  setOpenId]  = useState(null);
   const [filtro,  setFiltro]  = useState("miei");
   const [load,    setLoad]    = useState(true);
   const [form,    setForm]    = useState({ titolo:"", dettagli:"", assegnati:[] });
 
-  const load_ = async () => { setLoad(true); const d=await dbGet("tasks","?order=created_at.desc"); setTasks(d); setLoad(false); };
+  const load_ = async () => {
+    setLoad(true);
+    const [t, c] = await Promise.all([
+      dbGet("tasks","?order=created_at.desc"),
+      dbGet("comunicazioni","?order=created_at.desc"),
+    ]);
+    setTasks(t);
+    // Solo comunicazioni non lette ricevute da questo utente
+    setComms(c.filter(m => (Array.isArray(m.destinatari)?m.destinatari:[]).includes(cur.id) && !(m.letti||{})[cur.id]));
+    setLoad(false);
+  };
   useEffect(() => { load_(); }, []);
+
+  const segnaLettoComm = async msg => {
+    const letti = { ...(msg.letti||{}), [cur.id]: true };
+    await dbUpsert("comunicazioni", { ...msg, letti });
+    setComms(p => p.filter(m => m.id !== msg.id));
+  };
 
   const toggleAss = uid => setForm(p => ({
     ...p,
@@ -1579,6 +1972,20 @@ function PageTask({ cur }) {
         </Card>
       )}
 
+      {/* Comunicazioni non lette */}
+      {comms.length > 0 && (
+        <div style={{ marginBottom:20 }}>
+          <div style={{ color:"#6366f1", fontSize:12, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", marginBottom:10 }}>💬 Comunicazioni non lette — {comms.length}</div>
+          {comms.map(msg => (
+            <ComunicazioneCard key={msg.id} msg={msg} cur={cur}
+              onLetto={() => segnaLettoComm(msg)}
+              onDelete={() => {}}
+              canSeeAll={false}
+            />
+          ))}
+        </div>
+      )}
+
       {load ? <Spin /> : (
         <div>
           {pending.length===0 && completed.length===0 && (
@@ -1607,7 +2014,7 @@ function PageTask({ cur }) {
 }
 
 // ─── APP ROOT ─────────────────────────────────────────────────────────────────
-const PAGE_LABELS = { home:"Dashboard", app:"Gestione App", social:"Social Media", cont:"Contabilità", turni:"Pianificazione Turni", contr:"Nuovi Contratti", task:"Task & Assegnazioni" };
+const PAGE_LABELS = { home:"Dashboard", app:"Gestione App", social:"Social Media", cont:"Contabilità", turni:"Pianificazione Turni", contr:"Nuovi Contratti", task:"Task & Assegnazioni", comm:"Comunicazione Team" };
 
 function Shell({ uid, setUid }) {
   const [page, setPage] = useState("home");
@@ -1633,16 +2040,15 @@ function Shell({ uid, setUid }) {
 
   const visNav = NAV.filter(n => n.roles.includes("all") || n.roles.includes(uid));
 
-  const PageContent = () => {
-    if (page==="home")  return <ErrBound name="Home"><PageHome cur={cur} key={refreshKey} /></ErrBound>;
-    if (page==="app")   return <ErrBound name="App"><PageApp cur={cur} key={refreshKey} /></ErrBound>;
-    if (page==="social")return <ErrBound name="Social"><PageSocial cur={cur} key={refreshKey} /></ErrBound>;
-    if (page==="cont")  return <ErrBound name="Contabilità"><PageCont cur={cur} key={refreshKey} /></ErrBound>;
-    if (page==="turni") return <ErrBound name="Turni"><PageTurni cur={cur} key={refreshKey} /></ErrBound>;
-    if (page==="contr") return <ErrBound name="Contratti"><PageContratti cur={cur} key={refreshKey} /></ErrBound>;
-    if (page==="task")  return <ErrBound name="Task"><PageTask cur={cur} key={refreshKey} /></ErrBound>;
-    return null;
-  };
+  let pageContent = null;
+  if (page==="home")  pageContent = <ErrBound name="Home"><PageHome cur={cur} key={refreshKey} /></ErrBound>;
+  if (page==="app")   pageContent = <ErrBound name="App"><PageApp cur={cur} key={refreshKey} /></ErrBound>;
+  if (page==="social")pageContent = <ErrBound name="Social"><PageSocial cur={cur} key={refreshKey} /></ErrBound>;
+  if (page==="cont")  pageContent = <ErrBound name="Contabilità"><PageCont cur={cur} key={refreshKey} /></ErrBound>;
+  if (page==="turni") pageContent = <ErrBound name="Turni"><PageTurni cur={cur} key={refreshKey} /></ErrBound>;
+  if (page==="contr") pageContent = <ErrBound name="Contratti"><PageContratti cur={cur} key={refreshKey} /></ErrBound>;
+  if (page==="task")  pageContent = <ErrBound name="Task"><PageTask cur={cur} key={refreshKey} /></ErrBound>;
+  if (page==="comm")  pageContent = <ErrBound name="Comunicazione"><PageComunicazione cur={cur} key={refreshKey} /></ErrBound>;
 
   if (mob) {
     return (
@@ -1655,7 +2061,7 @@ function Shell({ uid, setUid }) {
           </div>
         </div>
         <div style={{ flex:1, overflow:"auto", padding:"16px 12px", paddingBottom:80 }}>
-          <PageContent />
+          {pageContent}
         </div>
         <div style={{ position:"fixed", bottom:0, left:0, right:0, background:C.surface, borderTop:`1px solid ${C.border}`, display:"flex", zIndex:50, boxShadow:"0 -2px 10px rgba(0,0,0,0.06)" }}>
           {visNav.map(n => (
@@ -1707,7 +2113,7 @@ function Shell({ uid, setUid }) {
           <div style={{ color:C.muted, fontSize:12 }}>{new Date().toLocaleDateString("it-IT",{day:"numeric",month:"short",year:"numeric"})}</div>
         </div>
         <div style={{ padding:28, maxWidth:1100, margin:"0 auto" }}>
-          <PageContent />
+          {pageContent}
         </div>
       </div>
     </div>
