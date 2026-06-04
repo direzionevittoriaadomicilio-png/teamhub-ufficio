@@ -3194,12 +3194,13 @@ function removeFromShift(wk,giorno,shiftId,idx){
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 <script>
-// ── Turni pre-caricati settimana 23 (01/06-07/06 2026) ──
+// ── Turni settimana 23 (01/06-07/06 2026) — sovrascrive sempre ──
 (function(){
-  const wk = '2026-W23';
-  const stored = localStorage.getItem('fattorini_turni_v1');
-  const turni = stored ? JSON.parse(stored) : {};
-  if(!turni[wk]){
+  try{
+    const wk = '2026-W23';
+    const stored = localStorage.getItem('fattorini_turni_v1');
+    const turni = stored ? JSON.parse(stored) : {};
+    // Sovrascrive sempre i dati della settimana 23
     turni[wk] = {
       lun: {
         '09-14': [{name:'IVAN'}],
@@ -3252,7 +3253,8 @@ function removeFromShift(wk,giorno,shiftId,idx){
       }
     };
     localStorage.setItem('fattorini_turni_v1', JSON.stringify(turni));
-  }
+    console.log('[TURNI] Settimana 23 caricata nel localStorage');
+  }catch(e){ console.error('[TURNI INIT ERROR]', e); }
 })();
 
 // ── PWA: solo install prompt (service worker richiede file separato su GitHub Pages) ──
