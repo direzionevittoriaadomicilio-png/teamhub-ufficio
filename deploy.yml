@@ -10,7 +10,7 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -18,15 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node 20
+      - name: Prepara file statici
         run: |
-          curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-          sudo apt-get install -y nodejs
-
-      - name: Install e Build
-        run: |
-          npm install
-          npm run build
+          mkdir -p dist
+          cp index.html dist/
+          cp manifest.json dist/ 2>/dev/null || true
+          cp sw.js dist/ 2>/dev/null || true
+          cp favicon.ico dist/ 2>/dev/null || true
+          cp icon.svg dist/ 2>/dev/null || true
+          cp icon-192.png dist/ 2>/dev/null || true
+          cp icon-512.png dist/ 2>/dev/null || true
 
       - uses: actions/configure-pages@v4
 
